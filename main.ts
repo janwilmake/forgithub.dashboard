@@ -1,4 +1,4 @@
-import login, { html, Env } from "./login";
+import login, { html, Env } from "./github-login";
 
 export default {
   fetch: async (request: Request, env: Env) => {
