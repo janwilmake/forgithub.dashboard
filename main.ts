@@ -33,7 +33,7 @@ export default {
                 </p>
                 <div class="flex justify-center gap-4">
                   <a
-                    href="/login"
+                    href="/login?scope=user:email,repo"
                     class="bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-lg font-medium transition-colors"
                   >
                     Login

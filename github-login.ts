@@ -1,9 +1,11 @@
 /*
 This is the most simple version of github oauth.
 
-to use it, ensure to set .dev.vars and wrangler.toml alike with the Env variables required
+To use it, ensure to create a github oauth client, then set .dev.vars and wrangler.toml alike with the Env variables required
 
-and navigate to /login from the homepage, with optional parameters ?scope=a,b,c&redirect_uri=/dashboard
+And navigate to /login from the homepage, with optional parameters ?scope=a,b,c&redirect_uri=/dashboard
+
+In localhost this won't work due to your hardcoded redirect url; It's better to simply set your localstorage manually.
 */
 declare global {
   var env: Env;
@@ -58,9 +60,9 @@ export default {
           }&redirect_uri=${encodeURIComponent(env.GITHUB_REDIRECT_URI)}&scope=${
             scope || "user:email"
           }&state=${state}`,
-          "Set-Cookie": `github_oauth_state=${state}; github_oauth_redirect_uri=${
-            redirect_uri || "/"
-          }; HttpOnly; Path=/; Secure`,
+          "Set-Cookie": `github_oauth_state=${state}; HttpOnly; Path=/; Secure`,
+          // adding this after comma didn't work for some reason
+          //github_oauth_redirect_uri=${redirect_uri || "/"}; HttpOnly; Path=/; Secure
         },
       });
     }
@@ -154,7 +156,7 @@ export default {
                   localStorage.setItem("github_oauth_scope", data.scope);
 
                   // Redirect to home or dashboard
-                  window.location.href = "${redirectCookie}";
+                  window.location.href = "${redirectCookie || "/"}";
                 </script>
               </div>
             </body>
