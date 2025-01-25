@@ -120,7 +120,15 @@ export default {
 
       // Validate state
       if (!urlState || !stateCookie || urlState !== stateCookie) {
-        return new Response("Invalid state", { status: 400 });
+        return new Response(
+          `Invalid state;
+          
+${cookieHeader}
+
+
+${stateCookie}`,
+          { status: 400 },
+        );
       }
 
       const code = url.searchParams.get("code");
