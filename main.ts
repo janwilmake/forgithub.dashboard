@@ -32,6 +32,13 @@ export default {
     // Login page route
     if (url.pathname === "/login") {
       const state = await generateRandomString(16);
+      if (
+        !env.GITHUB_CLIENT_ID ||
+        !env.GITHUB_REDIRECT_URI ||
+        !env.GITHUB_CLIENT_SECRET
+      ) {
+        return new Response("Environment variables are missing");
+      }
 
       // Create a response with HTTP-only state cookie
       return new Response(
