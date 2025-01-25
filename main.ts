@@ -7,7 +7,6 @@ export default {
 
     const cookie = request.headers.get("Cookie");
     const rows = cookie?.split(";").map((x) => x.trim());
-    console.log({ rows });
     const accessToken = rows
       ?.find((row) => row.startsWith("github_access_token="))
       ?.split("=")[1]
