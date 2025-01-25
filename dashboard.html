@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-slate-900">
+
+<head>
+    <meta charset="utf8" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Monoflare Dashboard</title>
+    <style>
+        @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
+
+        body {
+            font-family: "Inter", sans-serif;
+        }
+
+        .screenshot-placeholder {
+            background: linear-gradient(45deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+        }
+    </style>
+</head>
+
+<body class="text-slate-100">
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-8">
+            <div class="flex items-center gap-4">
+                <a href="/" class="hover:text-orange-300 transition-colors">
+                    <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                </a>
+                <h1
+                    class="text-3xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
+                    Monoflare Dashboard
+                </h1>
+            </div>
+            <div class="flex gap-4">
+                <button class="bg-slate-800 px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors">
+                    Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Chat Box -->
+        <div class="fixed bottom-4 right-4 bg-slate-800 p-4 rounded-lg shadow-lg w-80">
+            <div class="flex flex-col gap-3">
+                <textarea class="bg-slate-700 rounded p-2 text-sm"
+                    placeholder="Enter task for selected repos..."></textarea>
+                <button class="bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded text-sm">
+                    Send Task
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Groups Container -->
+        <div id="data-container" class="grid gap-8"></div>
+    </main>
+
+    <script>
+        const data = [
+            {
+                name: "api-gateway",
+                domain: "uithub.com",
+                openapi: { summary: "Main API with 25 endpoints", version: "3.1.0" },
+                screenshot: null,
+                categories: ["API Gateway", "Node.js", "Redis"],
+                actions: { successRate: 0.92, lastRun: "2024-03-16T09:45:00Z" },
+                deployment: { provider: "Cloudflare", logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg" },
+                links: {
+                    github: "#",
+                    uithub: "#",
+                    website: "#",
+                    openapi: "#"
+                }
+            },
+            {
+                name: "auth-service",
+                domain: "monoflare.cloud",
+                openapi: { summary: "Authentication API with OAuth2", version: "2.4.1" },
+                screenshot: null,
+                categories: ["Authentication", "TypeScript", "PostgreSQL"],
+                actions: { successRate: 0.88, lastRun: "2024-03-15T16:20:00Z" },
+                deployment: { provider: "Vercel", logo: "https://www.svgrepo.com/show/327408/logo-vercel.svg" },
+                links: {
+                    github: "#",
+                    uithub: "#",
+                    website: "#",
+                    openapi: "#"
+                }
+            },
+            {
+                name: "payment-processor",
+                domain: "monoflare.cloud",
+                openapi: { summary: "Payment processing endpoints", version: "1.2.0" },
+                screenshot: null,
+                categories: ["Payments", "Go", "MySQL"],
+                actions: { successRate: 0.95, lastRun: "2024-03-16T11:10:00Z" },
+                deployment: { provider: "AWS", logo: "https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg" },
+                links: {
+                    github: "#",
+                    uithub: "#",
+                    website: "#",
+                    openapi: "#"
+                }
+            },
+            {
+                name: "analytics-dashboard",
+                domain: "analytics.example.com",
+                openapi: null,
+                screenshot: null,
+                categories: ["Analytics", "React", "TypeScript"],
+                actions: { successRate: 0.78, lastRun: "2024-03-14T14:15:00Z" },
+                deployment: { provider: "Netlify", logo: "https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg" },
+                links: {
+                    github: "#",
+                    uithub: "#",
+                    website: "#",
+                    openapi: "#"
+                }
+            },
+            {
+                name: "email-service",
+                domain: "uithub.com",
+                openapi: { summary: "Transactional email service", version: "1.0.0" },
+                screenshot: null,
+                categories: ["Communication", "Python", "Redis"],
+                actions: { successRate: 0.85, lastRun: "2024-03-16T08:30:00Z" },
+                deployment: { provider: "Google Cloud", logo: "https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg" },
+                links: {
+                    github: "#",
+                    uithub: "#",
+                    website: "#",
+                    openapi: "#"
+                }
+            },
+            {
+                name: "cdn-edge",
+                domain: "monoflare.cloud",
+                openapi: null,
+                screenshot: null,
+                categories: ["CDN", "Rust", "WASM"],
+                actions: { successRate: 0.97, lastRun: "2024-03-16T10:00:00Z" },
+                deployment: { provider: "Cloudflare", logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg" },
+                links: {
+                    github: "#",
+                    uithub: "#",
+                    website: "#",
+                    openapi: "#"
+                }
+            }
+        ];
+
+        // Render function
+        function renderRepos() {
+            const container = document.getElementById('data-container');
+            const grouped = data.reduce((acc, repo) => {
+                const domainGroup = acc[repo.domain] || {};
+                const category = repo.categories[0];
+                domainGroup[category] = [...(domainGroup[category] || []), repo];
+                return { ...acc, [repo.domain]: domainGroup };
+            }, {});
+
+            Object.entries(grouped).forEach(([domain, categories]) => {
+                const domainSection = document.createElement('div');
+                domainSection.className = 'bg-slate-800 p-6 rounded-xl';
+                domainSection.innerHTML = `
+                    <h2 class="text-xl font-semibold mb-4">${domain}</h2>
+                    <div class="grid md:grid-cols-2 gap-4" id="${domain.replace(/\./g, '-')}-container"></div>
+                `;
+
+                Object.entries(categories).forEach(([category, repos]) => {
+                    const categoryContainer = domainSection.querySelector(`#${domain.replace(/\./g, '-')}-container`);
+                    repos.forEach(repo => {
+                        const repoCard = document.createElement('div');
+                        repoCard.className = 'bg-slate-700/50 p-4 rounded-lg';
+                        repoCard.innerHTML = `
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h3 class="font-medium">${repo.name}</h3>
+                                    <p class="text-sm text-slate-400">Last updated ${new Date(repo.actions.lastRun).toLocaleDateString()}</p>
+                                </div>
+                                <img src="${repo.deployment.logo}" class="w-8 h-8 rounded" alt="${repo.deployment.provider}">
+                            </div>
+
+                            <div class="screenshot-placeholder w-full h-32 rounded mb-4 flex items-center justify-center text-slate-400">
+                                ${repo.screenshot ? `<img src="${repo.screenshot}" alt="Screenshot">` : 'Screenshot Preview'}
+                            </div>
+
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                ${repo.categories.map(cat => `
+                                    <span class="bg-slate-600 px-2 py-1 rounded text-xs">${cat}</span>
+                                `).join('')}
+                            </div>
+
+                            <div class="flex justify-between items-center text-sm">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-2 h-2 ${repo.actions.successRate > 0.9 ? 'bg-green-500' : 'bg-amber-500'} rounded-full"></div>
+                                    <span>Actions: ${Math.round(repo.actions.successRate * 100)}% success</span>
+                                </div>
+                                <div class="flex gap-2">
+                                    ${repo.openapi ? `
+                                    <button class="text-orange-400 hover:text-orange-300" title="Fetch OpenAPI">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                        </svg>
+                                    </button>` : ''}
+                                    <button class="text-slate-400 hover:text-slate-300" title="Links">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                        categoryContainer.appendChild(repoCard);
+                    });
+                });
+                container.appendChild(domainSection);
+            });
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', renderRepos);
+    </script>
+</body>
+
+</html>
