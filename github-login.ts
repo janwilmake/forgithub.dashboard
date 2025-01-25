@@ -42,8 +42,6 @@ export default {
     // Login page route
     if (url.pathname === "/login") {
       const scope = url.searchParams.get("scope");
-      const redirect_uri = url.searchParams.get("redirect_uri");
-
       const state = await generateRandomString(16);
       if (
         !env.GITHUB_CLIENT_ID ||
