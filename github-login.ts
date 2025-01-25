@@ -69,9 +69,8 @@ export default {
     if (url.pathname === "/callback") {
       // Get the state from URL and cookies
       const urlState = url.searchParams.get("state");
-      const cookieHeader = request.headers.get("Cookie");
-      // Extract state from cookies
-      const rows = cookieHeader?.split("; ");
+      const cookies = request.headers.getAll("Cookie");
+      const rows = cookies.map((x) => x.split(";")).flat();
       const stateCookie = rows
         ?.find((row) => row.startsWith("github_oauth_state="))
         ?.split("=")[1];
