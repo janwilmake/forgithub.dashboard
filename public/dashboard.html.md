@@ -10,4 +10,10 @@ For all repos from http://cache.uithub.com/repos/janwilmake:
 - actions summary / success
 - logo of deployment provider
 
-Then, show this in a vercel-like way, but with the added advantage that it's super reasy to fetch any additional datapoint and view it for each repo.
+Layout:
+
+- show this in a vercel-like way
+- select to fetch any additional datapoint and view it for each repo
+- grouped by domain and category
+- there's a chatbox to start a new task for one or more repos
+- each item has buttons to get datapoint, or go to github/uithub/website/openapi/chat
