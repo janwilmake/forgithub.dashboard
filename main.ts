@@ -5,12 +5,8 @@ export default {
     const response = await login.fetch(request, env);
     if (response) return response;
 
-    const rows = request.headers
-      .get("Cookie")
-      ?.split(",")
-      .map((x) => x.split(";"))
-      .flat();
-
+    const cookies = request.headers.getAll("Cookie");
+    const rows = cookies.map((x) => x.split(";")).flat();
     const accessToken = rows
       ?.find((row) => row.startsWith("github_access_token="))
       ?.split("=")[1]
