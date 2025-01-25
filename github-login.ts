@@ -72,11 +72,13 @@ export default {
       const cookie = request.headers.get("Cookie");
       const rows = cookie?.split(";").map((x) => x.trim());
       const stateCookie = rows
-        ?.find((row) => row.startsWith("github_oauth_state="))
-        ?.split("=")[1];
+        ?.find((row) => row.startsWith("github_oauth_state"))
+        ?.split("=")[1]
+        .trim();
 
       // Validate state
       if (!urlState || !stateCookie || urlState !== stateCookie) {
+        // NB: this breaks things on my mobile
         return new Response(`Invalid state`, { status: 400 });
       }
 
@@ -113,11 +115,15 @@ export default {
         });
         headers.append(
           "Set-Cookie",
-          `github_access_token=${access_token}; HttpOnly; Path=/; Secure; Max-Age=34560000; SameSite=Lax`,
+          `authorization=${encodeURIComponent(
+            `Bearer ${access_token}`,
+          )}; HttpOnly; Path=/; Secure; Max-Age=34560000; SameSite=Lax`,
         );
         headers.append(
           "Set-Cookie",
-          `github_oauth_scope=${scope}; HttpOnly; Path=/; Secure; Max-Age=34560000; SameSite=Lax`,
+          `github_oauth_scope=${encodeURIComponent(
+            scope,
+          )}; HttpOnly; Path=/; Secure; Max-Age=34560000; SameSite=Lax`,
         );
         headers.append(
           "Set-Cookie",
@@ -126,6 +132,7 @@ export default {
         return new Response("Redirecting", { status: 307, headers });
       } catch (error) {
         // Error handling
+
         return new Response(
           html`
             <!DOCTYPE html>

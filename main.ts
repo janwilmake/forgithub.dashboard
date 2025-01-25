@@ -4,19 +4,24 @@ export default {
   fetch: async (request: Request, env: Env) => {
     const response = await login.fetch(request, env);
     if (response) return response;
-
+    const url = new URL(request.url);
     const cookie = request.headers.get("Cookie");
     const rows = cookie?.split(";").map((x) => x.trim());
-    const accessToken = rows
-      ?.find((row) => row.startsWith("github_access_token="))
-      ?.split("=")[1]
-      .trim();
-    const scope = rows
-      ?.find((row) => row.startsWith("github_oauth_scope="))
-      ?.split("=")[1]
-      .trim();
+    const authHeader = rows?.find((row) => row.startsWith("authorization="));
+    const authorization = authHeader
+      ? decodeURIComponent(authHeader.split("=")[1].trim())
+      : request.headers.get("authorization");
+    const accessToken = authorization
+      ? authorization?.slice("Bearer ".length)
+      : url.searchParams.get("apiKey");
 
-    const url = new URL(request.url);
+    const scope = decodeURIComponent(
+      rows
+        ?.find((row) => row.startsWith("github_oauth_scope="))
+        ?.split("=")[1]
+        .trim() || "",
+    );
+
     if (url.pathname === "/dashboard") {
       return new Response(
         html`<!DOCTYPE html>
@@ -99,7 +104,6 @@ export default {
         { headers: { "content-type": "text/html" } },
       );
     }
-
     return new Response(
       html`<!DOCTYPE html>
         <html lang="en" class="bg-slate-900">
