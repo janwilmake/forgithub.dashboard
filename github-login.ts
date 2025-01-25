@@ -1,4 +1,5 @@
 /*
+======GITHUB LOGIN SCRIPT========
 This is the most simple version of github oauth.
 
 To use it, ensure to create a github oauth client, then set .dev.vars and wrangler.toml alike with the Env variables required
