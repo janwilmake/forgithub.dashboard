@@ -60,7 +60,7 @@ export default {
           }&redirect_uri=${encodeURIComponent(env.GITHUB_REDIRECT_URI)}&scope=${
             scope || "user:email"
           }&state=${state}`,
-          "Set-Cookie": `github_oauth_state=${state}; HttpOnly; Path=/; Secure; SameSite=Lax`,
+          "Set-Cookie": `github_oauth_state=${state}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
         },
       });
     }
@@ -69,8 +69,8 @@ export default {
     if (url.pathname === "/callback") {
       // Get the state from URL and cookies
       const urlState = url.searchParams.get("state");
-      const cookies = request.headers.getAll("Cookie");
-      const rows = cookies.map((x) => x.split(";")).flat();
+      const cookie = request.headers.get("Cookie");
+      const rows = cookie?.split(";").map((x) => x.trim());
       const stateCookie = rows
         ?.find((row) => row.startsWith("github_oauth_state="))
         ?.split("=")[1];
