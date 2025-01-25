@@ -1,6 +1,10 @@
-// this is the most simple version of github oauth.
-// to use it, ensure to set .dev.vars and wrangler.toml alike with the Env variables required
-// and navigate to /login from the homepage
+/*
+This is the most simple version of github oauth.
+
+to use it, ensure to set .dev.vars and wrangler.toml alike with the Env variables required
+
+and navigate to /login from the homepage, with optional parameters ?scope=a,b,c&redirect_uri=/dashboard
+*/
 declare global {
   var env: Env;
 }
@@ -150,7 +154,7 @@ export default {
                   localStorage.setItem("github_oauth_scope", data.scope);
 
                   // Redirect to home or dashboard
-                  window.location.href = ${redirectCookie};
+                  window.location.href = "${redirectCookie}";
                 </script>
               </div>
             </body>
