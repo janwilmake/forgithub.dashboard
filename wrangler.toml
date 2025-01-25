@@ -9,4 +9,3 @@ routes = [
 
 [vars]
 GITHUB_REDIRECT_URI = "https://monoflare.cloud/callback"
-GITHUB_SCOPE = "user:email"

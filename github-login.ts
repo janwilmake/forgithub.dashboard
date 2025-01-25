@@ -15,7 +15,6 @@ export const html = (strings: TemplateStringsArray, ...values: any[]) => {
 export interface Env {
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;
-  GITHUB_SCOPE: string;
   GITHUB_REDIRECT_URI: string;
 }
 
@@ -34,6 +33,9 @@ export default {
 
     // Login page route
     if (url.pathname === "/login") {
+      const scope = url.searchParams.get("scope");
+      const redirect_uri = url.searchParams.get("redirect_uri");
+
       const state = await generateRandomString(16);
       if (
         !env.GITHUB_CLIENT_ID ||
@@ -50,9 +52,11 @@ export default {
           Location: `https://github.com/login/oauth/authorize?client_id=${
             env.GITHUB_CLIENT_ID
           }&redirect_uri=${encodeURIComponent(env.GITHUB_REDIRECT_URI)}&scope=${
-            env.GITHUB_SCOPE
+            scope || "user:email"
           }&state=${state}`,
-          "Set-Cookie": `github_oauth_state=${state}; HttpOnly; Path=/; Secure`,
+          "Set-Cookie": `github_oauth_state=${state}; github_oauth_redirect_uri=${
+            redirect_uri || "/"
+          }; HttpOnly; Path=/; Secure`,
         },
       });
     }
@@ -62,11 +66,13 @@ export default {
       // Get the state from URL and cookies
       const urlState = url.searchParams.get("state");
       const cookieHeader = request.headers.get("Cookie");
-
       // Extract state from cookies
-      const stateCookie = cookieHeader
-        ?.split("; ")
-        .find((row) => row.startsWith("github_oauth_state="))
+      const rows = cookieHeader?.split("; ");
+      const stateCookie = rows
+        ?.find((row) => row.startsWith("github_oauth_state="))
+        ?.split("=")[1];
+      const redirectCookie = rows
+        ?.find((row) => row.startsWith("github_oauth_redirect_uri="))
         ?.split("=")[1];
 
       // Validate state
@@ -144,7 +150,7 @@ export default {
                   localStorage.setItem("github_oauth_scope", data.scope);
 
                   // Redirect to home or dashboard
-                  window.location.href = "/";
+                  window.location.href = ${redirectCookie};
                 </script>
               </div>
             </body>
