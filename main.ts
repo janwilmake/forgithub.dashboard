@@ -1,6 +1,7 @@
 import login, { html, Env } from "./github-login";
 export default {
   fetch: async (request: Request, env: Env) => {
+    // handy trick to make env available everywhere.
     globalThis.env = env;
     const page = await login.fetch(request, env);
     if (page) return page;
@@ -11,7 +12,9 @@ export default {
         <html lang="en" class="bg-slate-900">
           <head>
             <script src="https://cdn.tailwindcss.com"></script>
-            <title>Monoflare - Cloudflare Monorepo Solution</title>
+            <title>
+              Monoflare - The Monorepo Solution For Cloudflare Microservices
+            </title>
             <style>
               @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
               body {
@@ -33,6 +36,7 @@ export default {
                 </p>
                 <div class="flex justify-center gap-4">
                   <a
+                    id="login"
                     href="/login?scope=user:email,repo"
                     class="bg-orange-500 hover:bg-orange-600 px-6 py-3 rounded-lg font-medium transition-colors"
                   >
@@ -113,6 +117,12 @@ export default {
               >
                 <p>Built with ❤️ for the Cloudflare ecosystem</p>
               </div>
+              <script>
+                if (window.localStorage.getItem("github_oauth_access_token")) {
+                  document.getElementById("login").innerText = "Dashboard";
+                  document.getElementById("login").href = "/dashboard";
+                }
+              </script>
             </main>
           </body>
         </html>

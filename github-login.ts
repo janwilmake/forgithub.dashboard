@@ -3,7 +3,7 @@ This is the most simple version of github oauth.
 
 To use it, ensure to create a github oauth client, then set .dev.vars and wrangler.toml alike with the Env variables required
 
-And navigate to /login from the homepage, with optional parameters ?scope=a,b,c&redirect_uri=/dashboard
+And navigate to /login from the homepage, with optional parameters ?scope=a,b,c
 
 In localhost this won't work due to your hardcoded redirect url; It's better to simply set your localstorage manually.
 */
@@ -22,6 +22,7 @@ export interface Env {
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;
   GITHUB_REDIRECT_URI: string;
+  LOGIN_REDIRECT_URI: string;
 }
 
 // Helper function to generate a random string
@@ -61,8 +62,6 @@ export default {
             scope || "user:email"
           }&state=${state}`,
           "Set-Cookie": `github_oauth_state=${state}; HttpOnly; Path=/; Secure`,
-          // adding this after comma didn't work for some reason
-          //github_oauth_redirect_uri=${redirect_uri || "/"}; HttpOnly; Path=/; Secure
         },
       });
     }
@@ -76,9 +75,6 @@ export default {
       const rows = cookieHeader?.split("; ");
       const stateCookie = rows
         ?.find((row) => row.startsWith("github_oauth_state="))
-        ?.split("=")[1];
-      const redirectCookie = rows
-        ?.find((row) => row.startsWith("github_oauth_redirect_uri="))
         ?.split("=")[1];
 
       // Validate state
@@ -156,7 +152,7 @@ export default {
                   localStorage.setItem("github_oauth_scope", data.scope);
 
                   // Redirect to home or dashboard
-                  window.location.href = "${redirectCookie || "/"}";
+                  window.location.href = "${env.LOGIN_REDIRECT_URI || "/"}";
                 </script>
               </div>
             </body>
