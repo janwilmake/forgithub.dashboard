@@ -56,7 +56,7 @@ export default {
               <!-- Hero Section -->
               <div class="text-center mb-20">
                 <h1
-                  class="text-5xl font-bold mb-6 bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent"
+                  class="text-7xl font-bold mb-6 bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent"
                 >
                   The Agent-Powered GitHub Dashboard For 1000X Devs
                 </h1>
