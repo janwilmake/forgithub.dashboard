@@ -83,42 +83,6 @@ export default {
                 </div>
               </div>
 
-              <!-- Features Grid -->
-              <div id="features" class="grid md:grid-cols-2 gap-8 mb-20">
-                <div class="bg-slate-800 p-8 rounded-xl">
-                  <h3 class="text-orange-400 text-xl font-semibold mb-4">
-                    Zero-Config Deployment
-                  </h3>
-                  <p class="text-slate-400">
-                    Single-file workers automatically become production-ready
-                    deployments with routing, security, and configurations
-                    generated for you.
-                  </p>
-                </div>
-
-                <div class="bg-slate-800 p-8 rounded-xl">
-                  <h3 class="text-orange-400 text-xl font-semibold mb-4">
-                    Smart Compilation
-                  </h3>
-                  <p class="text-slate-400">
-                    Automatic domain detection, dependency management, and
-                    environment variable injection - all from your TypeScript
-                    code.
-                  </p>
-                </div>
-
-                <div class="bg-slate-800 p-8 rounded-xl">
-                  <h3 class="text-orange-400 text-xl font-semibold mb-4">
-                    Unified Tooling
-                  </h3>
-                  <p class="text-slate-400">
-                    Manage KV stores, D1 databases, and Cloudflare APIs through
-                    standard TypeScript interfaces and automatic OpenAPI
-                    generation.
-                  </p>
-                </div>
-              </div>
-
               <!-- Status Alert -->
               <div
                 class="bg-amber-900/30 border border-amber-800 rounded-lg p-6 mb-12"
@@ -134,7 +98,7 @@ export default {
                     <p class="text-sm text-amber-300/80">
                       Follow our progress on
                       <a
-                        href="https://x.com/janwilmake/status/1882815278557622711"
+                        href="https://x.com/janwilmake/status/1883817352287924463"
                         class="underline hover:text-amber-200"
                         >Twitter</a
                       >

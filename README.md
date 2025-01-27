@@ -1,7 +1,7 @@
 # The Agent-Powered GitHub Dashboard For 1000X Devs
 
 > [!NOTE]
-> This is a Work in Progress. [Follow the progress in this thread](https://x.com/janwilmake/status/1883817352287924463)
+> This is a Work in Progress, built out from https://github.com/janwilmake/cloudflare-sponsorware. [Follow the progress in this thread](https://x.com/janwilmake/status/1883817352287924463)
 
 Goal: bring all insights you want to see about your repos/sites/apps in 1 place.
 
