@@ -39,7 +39,7 @@ export default {
 
             <script src="https://cdn.tailwindcss.com"></script>
             <title>
-              Uithub Dashboard - The Agent-Powered GitHub Dashboard For 1000X
+              UitHub Dashboard - The Agent-Powered GitHub Dashboard For 1000X
               Devs
             </title>
             <style>
@@ -61,7 +61,7 @@ export default {
                   The Agent-Powered GitHub Dashboard For 1000X Devs
                 </h1>
                 <p class="text-2xl text-slate-300 mb-8">
-                  Your Home for AI-enhanced Software Development
+                  UitHub is Your Home for AI-enhanced Software Development
                 </p>
                 <div class="flex justify-center gap-4">
                   <a
