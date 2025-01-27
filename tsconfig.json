@@ -1,8 +1,9 @@
 {
-  "compileOnSave": true,
   "compilerOptions": {
-    "lib": ["es2022"],
+    "lib": ["ESNext"],
+    "target": "ESNext",
     "strict": true,
+    "noEmit": true,
     "skipLibCheck": true,
     "types": ["@cloudflare/workers-types"],
     "declaration": true

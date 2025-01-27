@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="bg-slate-900">
+<html lang="en" class="bg-black">
 
 <head>
     <meta charset="utf8" />
@@ -13,40 +13,42 @@
         }
 
         .screenshot-placeholder {
-            background: linear-gradient(45deg, #1e293b 25%, #334155 50%, #1e293b 75%);
+            background: linear-gradient(45deg, #1e1b2e 25%, #2d1b3d 50%, #1e1b2e 75%);
         }
     </style>
 </head>
 
-<body class="text-slate-100">
+<body class="text-gray-100">
     <main class="max-w-6xl mx-auto px-4 py-8">
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
             <div class="flex items-center gap-4">
-                <a href="/?home=true" class="hover:text-orange-300 transition-colors">
-                    <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <a href="/?home=true" class="hover:text-pink-300 transition-colors">
+                    <svg class="w-6 h-6 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                     </svg>
                 </a>
                 <h1
-                    class="text-3xl font-bold bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent">
+                    class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent">
                     Uithub Dashboard
                 </h1>
             </div>
             <div class="flex gap-4">
-                <button class="bg-slate-800 px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors">
+                <button
+                    class="bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
                     Refresh Data
                 </button>
             </div>
         </div>
 
         <!-- Chat Box -->
-        <div class="fixed bottom-4 right-4 bg-slate-800 p-4 rounded-lg shadow-lg w-80">
+        <div class="fixed bottom-4 right-4 bg-purple-900/30 border border-purple-800 p-4 rounded-lg shadow-lg w-80">
             <div class="flex flex-col gap-3">
-                <textarea class="bg-slate-700 rounded p-2 text-sm"
+                <textarea class="bg-purple-800/30 rounded p-2 text-sm"
                     placeholder="Enter task for selected repos..."></textarea>
-                <button class="bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded text-sm">
+                <button
+                    class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-3 py-1 rounded text-sm">
                     Send Task
                 </button>
             </div>
@@ -162,7 +164,7 @@
 
             Object.entries(grouped).forEach(([domain, categories]) => {
                 const domainSection = document.createElement('div');
-                domainSection.className = 'bg-slate-800 p-6 rounded-xl';
+                domainSection.className = 'bg-purple-900/30 border border-purple-800 p-6 rounded-xl';
                 domainSection.innerHTML = `
                     <h2 class="text-xl font-semibold mb-4">${domain}</h2>
                     <div class="grid md:grid-cols-2 gap-4" id="${domain.replace(/\./g, '-')}-container"></div>
@@ -172,39 +174,39 @@
                     const categoryContainer = domainSection.querySelector(`#${domain.replace(/\./g, '-')}-container`);
                     repos.forEach(repo => {
                         const repoCard = document.createElement('div');
-                        repoCard.className = 'bg-slate-700/50 p-4 rounded-lg';
+                        repoCard.className = 'bg-purple-800/30 p-4 rounded-lg';
                         repoCard.innerHTML = `
                             <div class="flex justify-between items-start mb-4">
                                 <div>
                                     <h3 class="font-medium">${repo.name}</h3>
-                                    <p class="text-sm text-slate-400">Last updated ${new Date(repo.actions.lastRun).toLocaleDateString()}</p>
+                                    <p class="text-sm text-gray-400">Last updated ${new Date(repo.actions.lastRun).toLocaleDateString()}</p>
                                 </div>
                                 <img src="${repo.deployment.logo}" class="w-8 h-8 rounded" alt="${repo.deployment.provider}">
                             </div>
 
-                            <div class="screenshot-placeholder w-full h-32 rounded mb-4 flex items-center justify-center text-slate-400">
+                            <div class="screenshot-placeholder w-full h-32 rounded mb-4 flex items-center justify-center text-gray-400">
                                 ${repo.screenshot ? `<img src="${repo.screenshot}" alt="Screenshot">` : 'Screenshot Preview'}
                             </div>
 
                             <div class="flex flex-wrap gap-2 mb-4">
                                 ${repo.categories.map(cat => `
-                                    <span class="bg-slate-600 px-2 py-1 rounded text-xs">${cat}</span>
+                                    <span class="bg-purple-700/50 px-2 py-1 rounded text-xs">${cat}</span>
                                 `).join('')}
                             </div>
 
                             <div class="flex justify-between items-center text-sm">
                                 <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 ${repo.actions.successRate > 0.9 ? 'bg-green-500' : 'bg-amber-500'} rounded-full"></div>
+                                    <div class="w-2 h-2 ${repo.actions.successRate > 0.9 ? 'bg-green-500' : 'bg-pink-500'} rounded-full"></div>
                                     <span>Actions: ${Math.round(repo.actions.successRate * 100)}% success</span>
                                 </div>
                                 <div class="flex gap-2">
                                     ${repo.openapi ? `
-                                    <button class="text-orange-400 hover:text-orange-300" title="Fetch OpenAPI">
+                                    <button class="text-pink-400 hover:text-pink-300" title="Fetch OpenAPI">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
                                         </svg>
                                     </button>` : ''}
-                                    <button class="text-slate-400 hover:text-slate-300" title="Links">
+                                    <button class="text-gray-400 hover:text-gray-300" title="Links">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                                         </svg>
