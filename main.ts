@@ -22,11 +22,15 @@ export default {
         .trim() || "",
     );
 
-    if (url.pathname === "/dashboard") {
+    if (
+      url.pathname === "/dashboard" ||
+      (accessToken && !url.searchParams.get("home"))
+    ) {
       return new Response(dashboard, {
         headers: { "content-type": "text/html" },
       });
     }
+
     return new Response(
       html`<!DOCTYPE html>
         <html lang="en" class="bg-slate-900">
