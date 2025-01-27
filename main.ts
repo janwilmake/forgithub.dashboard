@@ -58,10 +58,10 @@ export default {
                 <h1
                   class="text-5xl font-bold mb-6 bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent"
                 >
-                  Uithub Dashboard
+                  The Agent-Powered GitHub Dashboard For 1000X Devs
                 </h1>
                 <p class="text-2xl text-slate-300 mb-8">
-                  The Agent-Powered GitHub Dashboard For 1000X Devs
+                  Your Home for AI-enhanced Software Development
                 </p>
                 <div class="flex justify-center gap-4">
                   <a

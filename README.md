@@ -61,9 +61,13 @@ This is POC. This is already cool! Also, useful if it were a plaintext (that wou
 
 Lets focus on making this context super worthy, and useful in order for a LLM to trim down what repos are significant for any given prompt.
 
+# Other great insights
+
+- recent social media / hackernews / news about topics XYZ --> great for GTM
+
 ## cycle
 
-After all of the above functions as desired, the dashboard can become the home for initiating agentic work
+After all of the above functions as desired, the dashboard can become the home for initiating agentic work. It's to be a goto place to see how you are doing and what's happening with your work.
 
 - patch
 - actions
