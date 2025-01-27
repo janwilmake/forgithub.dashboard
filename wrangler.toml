@@ -1,12 +1,11 @@
-name = "monoflare"
+name = "uithub_dashboard"
 main = "main.ts"
 compatibility_date = "2025-01-25"
 
 routes = [
-  { pattern = "monoflare.cloud", custom_domain = true },
-  { pattern = "www.monoflare.cloud", custom_domain = true }
+  { pattern = "dashboard.uithub.com", custom_domain = true }
 ]
 
 [vars]
-GITHUB_REDIRECT_URI = "https://monoflare.cloud/callback"
+GITHUB_REDIRECT_URI = "https://dashboard.uithub.com/callback"
 LOGIN_REDIRECT_URI = "/dashboard"

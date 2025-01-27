@@ -39,7 +39,8 @@ export default {
 
             <script src="https://cdn.tailwindcss.com"></script>
             <title>
-              Monoflare - The Monorepo Solution For Cloudflare Microservices
+              Uithub Dashboard - The Agent-Powered GitHub Dashboard For 1000X
+              Devs
             </title>
             <style>
               @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
@@ -57,10 +58,10 @@ export default {
                 <h1
                   class="text-5xl font-bold mb-6 bg-gradient-to-r from-orange-400 to-amber-400 bg-clip-text text-transparent"
                 >
-                  Monoflare
+                  Uithub Dashboard
                 </h1>
                 <p class="text-2xl text-slate-300 mb-8">
-                  The Monorepo Solution for Cloudflare Microservices
+                  The Agent-Powered GitHub Dashboard For 1000X Devs
                 </p>
                 <div class="flex justify-center gap-4">
                   <a
@@ -73,7 +74,7 @@ export default {
                     ${accessToken ? "Dashboard" : "Login"}
                   </a>
                   <a
-                    href="https://github.com/janwilmake/monoflare"
+                    href="https://github.com/janwilmake/uithub.dashboard"
                     target="_blank"
                     class="border border-orange-500 text-orange-500 px-6 py-3 rounded-lg font-medium hover:bg-orange-500/10 transition-colors"
                   >
