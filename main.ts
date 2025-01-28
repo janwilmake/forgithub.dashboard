@@ -1,5 +1,6 @@
 import dashboard from "./dashboard.html";
 import { Env, getSponsor, html, middleware } from "./sponsorflare";
+
 export default {
   fetch: async (request: Request, env: Env) => {
     // Handle sponsorflare auth
