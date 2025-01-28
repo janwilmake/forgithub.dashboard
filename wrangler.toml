@@ -13,8 +13,5 @@ LOGIN_REDIRECT_URI = "/dashboard"
 [[durable_objects.bindings]]
 name = "SPONSOR_DO"
 class_name = "SponsorDO"
+# This allows to use the same DO even though it's defined in another worker!
 script_name = "sponsorflare"
-
-[[migrations]]
-tag = "v1"
-new_classes = ["SponsorDO"]

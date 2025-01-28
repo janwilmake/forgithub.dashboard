@@ -7,7 +7,7 @@ export default {
     const sponsorflare = await middleware(request, env);
     if (sponsorflare) return sponsorflare;
 
-    const { is_authenticated } = await getSponsor(request, env, { charge: 1 });
+    const sponsor = await getSponsor(request, env, { charge: 1 });
     const url = new URL(request.url);
     const cookie = request.headers.get("Cookie");
     const rows = cookie?.split(";").map((x) => x.trim());
@@ -20,12 +20,13 @@ export default {
 
     if (
       url.pathname === "/dashboard" ||
-      (is_authenticated && !url.searchParams.get("home"))
+      (sponsor.is_authenticated && !url.searchParams.get("home"))
     ) {
       return new Response(
         dashboard.replace(
           "<script>",
           `<script>\nconst data = ${JSON.stringify({
+            sponsor,
             scope,
             repos: [
               {
@@ -248,12 +249,12 @@ export default {
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                   <a
                     id="login"
-                    href="${is_authenticated
+                    href="${sponsor.is_authenticated
                       ? "/dashboard"
-                      : "/login?scope=user:email,public_repo"}"
+                      : "/login?scope=user:email"}"
                     class="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-lg font-medium transition-colors text-center text-white"
                   >
-                    ${is_authenticated ? "Dashboard" : "Login"}
+                    ${sponsor.is_authenticated ? "Dashboard" : "Login"}
                   </a>
                   <a
                     href="https://github.com/janwilmake/uithub.dashboard"
