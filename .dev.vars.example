@@ -1,5 +1,6 @@
 GITHUB_CLIENT_ID=
 GITHUB_CLIENT_SECRET=
 # use `npx wrangler secret put GITHUB_CLIENT_XXX` to put the secrets
-# use this to skip login
-SKIP_LOGIN=true
+# set to 'true' to skip login on localhost. will directly log in with your PAT
+SKIP_LOGIN=
+GITHUB_PAT=
