@@ -23,6 +23,18 @@ export default {
       url.pathname === "/dashboard" ||
       (sponsor.is_authenticated && !url.searchParams.get("home"))
     ) {
+      if (!sponsor.is_authenticated) {
+        return new Response("Redirecting...", {
+          status: 307,
+          headers: {
+            Location:
+              url.origin +
+              `/login?redirect_uri=${encodeURIComponent(
+                "https://dashboard.uithub.com/dashboard",
+              )}`,
+          },
+        });
+      }
       return new Response(
         dashboard.replace(
           "<script>",

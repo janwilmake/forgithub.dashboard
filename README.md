@@ -53,29 +53,41 @@ https://stackoverflow.com/questions/18492576/share-cookies-between-subdomain-and
 
 ✅ It's important that people can login from anywhere on uithub, to the came redirect uri, and then land back where they were. This helps not having to create soooo many clients. Let's confirm this is doable. Added possibility for passing redirect_uri
 
+## Continue (2025-01-29)
+
 ✅ To proof this works, try it at `uithub.cf` in production and ensure it actually redirects to `dashboard.uithub.com/callback` after logging in so we can use the same client.
 
 ✅ `COOKIE_DOMAIN_SHARING=true` should be a configurable param.
 
 ✅ Login should just require `user:email`
 
-In dashboard show warning and request to also see private repos if scope didn't include it yet
-
-Auth idea: Redirect 401 to `/login?redirect_uri=CURRENT` (which could redirect to site to callback and back to where i was). never problems logging in anymore! Wow!
-
-Become my own sponsor using a different Github Account, for $50/m, to test it works as intended, and test the flow. Especially: how fast does the credit get there? Write down the date and also plan to check next month.
-
-Learn more about the behavior of cookies and the specifications that are currently mostly implemented in 99% of used browsers. Write a thread on sponsorflare again and the concepts of sharing login across subdomains and the 'GitHub Automatic Login'.
-
 ✅ Ensure the URL is stored for every transaction.
 
 ✅ Add endpoint `GET /usage` to get all transactions grouped by date and hostname, like openai does.
 
+✅ Auth idea: Redirect 401 at `/dashboard` to `/login?redirect_uri=CURRENT` (which could redirect to site to callback and back to where i was). never problems logging in anymore! Wow!
+
+✅ Learn more about the behavior of cookies and the specifications that are currently mostly implemented in 99% of used browsers. Write a thread on sponsorflare again and the concepts of sharing login across subdomains and the 'GitHub Automatic Login'.
+
+✅ Become my own sponsor using a different Github Account, for $50/m, to test it works as intended, and test the flow. Especially: how fast does the credit get there?
+
+✅ Fixed a but where the ID couldn't be parsed and we missed a header for github
+
+## Dashboard page
+
+Add ability to logout via `/logout` which removes headers, removes access from client, and takes `?redirect_uri`.
+
 Show username, image, and balance (spent-clv) in a header, which opens `/usage` when clicking where you can see all details, logout, see balance, and see where to sponsor.
+
+Show warning and request to also see private repos if scope didn't include it yet.
+
+Link to `/usage`
+
+## Usage page
 
 In `/usage` render stacked bar graph per date per hostname. Add ability to access it as data via `getUsage` fn.
 
-Allow adding further kv to the charge via config which can later also appear in pricing.
+## sponsorflare as package
 
 Create `wilmake.cftemplate` template which basically just has all basic files for a new repo including a package of sponsorflare, so I can start with `gh repo create --public abcabc -p wilmake.cftemplate`
 
