@@ -73,19 +73,15 @@ https://stackoverflow.com/questions/18492576/share-cookies-between-subdomain-and
 
 ✅ Fixed a but where the ID couldn't be parsed and we missed a header for github
 
+✅ Add ability to logout via `/logout` which removes headers, removes access from client, and takes `?redirect_uri`.
+
 ## Dashboard page
 
-Add ability to logout via `/logout` which removes headers, removes access from client, and takes `?redirect_uri`.
-
-Show username, image, and balance (spent-clv) in a header, which opens `/usage` when clicking where you can see all details, logout, see balance, and see where to sponsor.
+✅ Show username, image, and balance (Spent-CLV) in a header, which opens `/usage` when clicking where you can see all details, logout, see balance, and see where to sponsor.
 
 Show warning and request to also see private repos if scope didn't include it yet.
 
-Link to `/usage`
-
-## Usage page
-
-In `/usage` render stacked bar graph per date per hostname. Add ability to access it as data via `getUsage` fn.
+✅ Usage page: render stacked bar graph per date per hostname. Add ability to access it as data via `getUsage` fn.
 
 ## sponsorflare as package
 

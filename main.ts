@@ -1,5 +1,13 @@
-import dashboard from "./dashboard.html";
-import { Env, getSponsor, html, middleware, getUsage } from "./sponsorflare";
+import {
+  Env,
+  getSponsor,
+  html,
+  middleware,
+  getUsage,
+  getCookies,
+} from "sponsorflare";
+import dashboardHtml from "./dashboard.html";
+import usageHtml from "./usage.html";
 
 export default {
   fetch: async (request: Request, env: Env) => {
@@ -10,20 +18,17 @@ export default {
     const sponsor = await getSponsor(request, env);
 
     const url = new URL(request.url);
-    const cookie = request.headers.get("Cookie");
-    const rows = cookie?.split(";").map((x) => x.trim());
-    const scope = decodeURIComponent(
-      rows
-        ?.find((row) => row.startsWith("github_oauth_scope="))
-        ?.split("=")[1]
-        .trim() || "",
-    );
+    const { scope, access_token, owner_id } = getCookies(request);
 
     if (
       url.pathname === "/dashboard" ||
-      (sponsor.is_authenticated && !url.searchParams.get("home"))
+      (sponsor.is_authenticated &&
+        sponsor.owner_login &&
+        !url.searchParams.get("home") &&
+        url.pathname === "/")
     ) {
       if (!sponsor.is_authenticated) {
+        // Trick (see https://x.com/janwilmake/status/1884635657131221244)
         return new Response("Redirecting...", {
           status: 307,
           headers: {
@@ -35,138 +40,191 @@ export default {
           },
         });
       }
+
+      // const reposResponse = await fetch(
+      //   `https://cache.forgithub.com/repos/${sponsor.owner_login}`,
+      //   {
+      //     headers: access_token
+      //       ? { Authorization: `Bearer ${access_token}` }
+      //       : undefined,
+      //   },
+      // );
+      // if (!reposResponse.ok) {
+      //   return new Response("Something went wrong: " + reposResponse.status, {
+      //     status: reposResponse.status,
+      //   });
+      // }
+
+      // const repoData = reposResponse.json();
+
+      const repos = [
+        {
+          name: "api-gateway",
+          domain: "uithub.com",
+          openapi: {
+            summary: "Main API with 25 endpoints",
+            version: "3.1.0",
+          },
+          screenshot: null,
+          categories: ["API Gateway", "Node.js", "Redis"],
+          actions: { successRate: 0.92, lastRun: "2024-03-16T09:45:00Z" },
+          deployment: {
+            provider: "Cloudflare",
+            logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg",
+          },
+          links: {
+            github: "#",
+            uithub: "#",
+            website: "#",
+            openapi: "#",
+          },
+        },
+        {
+          name: "auth-service",
+          domain: "dashboard.uithub.com",
+          openapi: {
+            summary: "Authentication API with OAuth2",
+            version: "2.4.1",
+          },
+          screenshot: null,
+          categories: ["Authentication", "TypeScript", "PostgreSQL"],
+          actions: { successRate: 0.88, lastRun: "2024-03-15T16:20:00Z" },
+          deployment: {
+            provider: "Vercel",
+            logo: "https://www.svgrepo.com/show/327408/logo-vercel.svg",
+          },
+          links: {
+            github: "#",
+            uithub: "#",
+            website: "#",
+            openapi: "#",
+          },
+        },
+        {
+          name: "payment-processor",
+          domain: "dashboard.uithub.com",
+          openapi: {
+            summary: "Payment processing endpoints",
+            version: "1.2.0",
+          },
+          screenshot: null,
+          categories: ["Payments", "Go", "MySQL"],
+          actions: { successRate: 0.95, lastRun: "2024-03-16T11:10:00Z" },
+          deployment: {
+            provider: "AWS",
+            logo: "https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg",
+          },
+          links: {
+            github: "#",
+            uithub: "#",
+            website: "#",
+            openapi: "#",
+          },
+        },
+        {
+          name: "analytics-dashboard",
+          domain: "analytics.example.com",
+          openapi: null,
+          screenshot: null,
+          categories: ["Analytics", "React", "TypeScript"],
+          actions: { successRate: 0.78, lastRun: "2024-03-14T14:15:00Z" },
+          deployment: {
+            provider: "Netlify",
+            logo: "https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg",
+          },
+          links: {
+            github: "#",
+            uithub: "#",
+            website: "#",
+            openapi: "#",
+          },
+        },
+        {
+          name: "email-service",
+          domain: "uithub.com",
+          openapi: {
+            summary: "Transactional email service",
+            version: "1.0.0",
+          },
+          screenshot: null,
+          categories: ["Communication", "Python", "Redis"],
+          actions: { successRate: 0.85, lastRun: "2024-03-16T08:30:00Z" },
+          deployment: {
+            provider: "Google Cloud",
+            logo: "https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg",
+          },
+          links: {
+            github: "#",
+            uithub: "#",
+            website: "#",
+            openapi: "#",
+          },
+        },
+        {
+          name: "cdn-edge",
+          domain: "dashboard.uithub.com",
+          openapi: null,
+          screenshot: null,
+          categories: ["CDN", "Rust", "WASM"],
+          actions: { successRate: 0.97, lastRun: "2024-03-16T10:00:00Z" },
+          deployment: {
+            provider: "Cloudflare",
+            logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg",
+          },
+          links: {
+            github: "#",
+            uithub: "#",
+            website: "#",
+            openapi: "#",
+          },
+        },
+      ];
+
       return new Response(
-        dashboard.replace(
+        dashboardHtml.replace(
           "<script>",
           `<script>\nconst data = ${JSON.stringify({
             sponsor,
             scope,
-            repos: [
-              {
-                name: "api-gateway",
-                domain: "uithub.com",
-                openapi: {
-                  summary: "Main API with 25 endpoints",
-                  version: "3.1.0",
-                },
-                screenshot: null,
-                categories: ["API Gateway", "Node.js", "Redis"],
-                actions: { successRate: 0.92, lastRun: "2024-03-16T09:45:00Z" },
-                deployment: {
-                  provider: "Cloudflare",
-                  logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg",
-                },
-                links: {
-                  github: "#",
-                  uithub: "#",
-                  website: "#",
-                  openapi: "#",
-                },
-              },
-              {
-                name: "auth-service",
-                domain: "dashboard.uithub.com",
-                openapi: {
-                  summary: "Authentication API with OAuth2",
-                  version: "2.4.1",
-                },
-                screenshot: null,
-                categories: ["Authentication", "TypeScript", "PostgreSQL"],
-                actions: { successRate: 0.88, lastRun: "2024-03-15T16:20:00Z" },
-                deployment: {
-                  provider: "Vercel",
-                  logo: "https://www.svgrepo.com/show/327408/logo-vercel.svg",
-                },
-                links: {
-                  github: "#",
-                  uithub: "#",
-                  website: "#",
-                  openapi: "#",
-                },
-              },
-              {
-                name: "payment-processor",
-                domain: "dashboard.uithub.com",
-                openapi: {
-                  summary: "Payment processing endpoints",
-                  version: "1.2.0",
-                },
-                screenshot: null,
-                categories: ["Payments", "Go", "MySQL"],
-                actions: { successRate: 0.95, lastRun: "2024-03-16T11:10:00Z" },
-                deployment: {
-                  provider: "AWS",
-                  logo: "https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg",
-                },
-                links: {
-                  github: "#",
-                  uithub: "#",
-                  website: "#",
-                  openapi: "#",
-                },
-              },
-              {
-                name: "analytics-dashboard",
-                domain: "analytics.example.com",
-                openapi: null,
-                screenshot: null,
-                categories: ["Analytics", "React", "TypeScript"],
-                actions: { successRate: 0.78, lastRun: "2024-03-14T14:15:00Z" },
-                deployment: {
-                  provider: "Netlify",
-                  logo: "https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg",
-                },
-                links: {
-                  github: "#",
-                  uithub: "#",
-                  website: "#",
-                  openapi: "#",
-                },
-              },
-              {
-                name: "email-service",
-                domain: "uithub.com",
-                openapi: {
-                  summary: "Transactional email service",
-                  version: "1.0.0",
-                },
-                screenshot: null,
-                categories: ["Communication", "Python", "Redis"],
-                actions: { successRate: 0.85, lastRun: "2024-03-16T08:30:00Z" },
-                deployment: {
-                  provider: "Google Cloud",
-                  logo: "https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg",
-                },
-                links: {
-                  github: "#",
-                  uithub: "#",
-                  website: "#",
-                  openapi: "#",
-                },
-              },
-              {
-                name: "cdn-edge",
-                domain: "dashboard.uithub.com",
-                openapi: null,
-                screenshot: null,
-                categories: ["CDN", "Rust", "WASM"],
-                actions: { successRate: 0.97, lastRun: "2024-03-16T10:00:00Z" },
-                deployment: {
-                  provider: "Cloudflare",
-                  logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg",
-                },
-                links: {
-                  github: "#",
-                  uithub: "#",
-                  website: "#",
-                  openapi: "#",
-                },
-              },
-            ],
+            repos,
           })}\n\n`,
         ),
         {
           headers: { "content-type": "text/html" },
+        },
+      );
+    }
+
+    if (url.pathname === "/usage.json") {
+      const usage = await getUsage(request, env);
+      if (!usage.usage) {
+        return new Response(usage.error || "Couldn't get usage", {
+          status: 400,
+        });
+      }
+      return new Response(JSON.stringify(usage.usage, undefined, 2), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    if (url.pathname === "/usage.html" || url.pathname === "/usage") {
+      const usage = await getUsage(request, env);
+      if (!usage.usage) {
+        return new Response(usage.error || "Couldn't get usage", {
+          status: 400,
+        });
+      }
+
+      return new Response(
+        usageHtml.replace(
+          "<script>",
+          `<script>\nconst data = ${JSON.stringify({
+            usage: usage.usage,
+          })}\n\n`,
+        ),
+        {
+          status: 200,
+          headers: { "Content-Type": "text/html" },
         },
       );
     }

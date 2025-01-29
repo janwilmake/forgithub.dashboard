@@ -19,7 +19,6 @@
 </head>
 
 <body class="text-gray-100">
-
     <main class="max-w-6xl mx-auto px-4 py-8">
         <!-- Header -->
         <div class="flex justify-between items-center mb-8">
@@ -35,19 +34,33 @@
                     Uithub Dashboard
                 </h1>
             </div>
-            <div class="flex items-center gap-4">
-                <!-- Scope display and control -->
-                <div class="flex items-center gap-2 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg">
-                    <span class="text-sm text-gray-300">Scope:</span>
-                    <button id="scopeButton" class="text-pink-400 hover:text-pink-300 transition-colors"
-                        onclick="changeScope()"></button>
-                </div>
-                <button
-                    class="bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
-                    Refresh Data
-                </button>
+
+            <div class="flex items-center">
+
+
+                <!-- User Profile Section -->
+                <a href="/usage"
+                    class="flex items-center gap-3 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    <img id="userAvatar" class="w-8 h-8 rounded-full" alt="User avatar">
+                    <div class="flex flex-col">
+                        <span id="userName" class="text-sm font-medium"></span>
+                        <span id="userBalance" class="text-xs text-gray-400"></span>
+                    </div>
+                </a>
+
             </div>
         </div>
+
+        <!-- Rest of the content remains the same -->
+        <p class="my-24 text-3xl">Thanks for requesting early access. Beta users will be added on a rolling basis.
+            Consider speeding up your admission by <a class="text-purple-600"
+                href="https://github.com/sponsors/janwilmake" target="_blank">sponsoring me</a> and <a target="_blank"
+                class="text-purple-600"
+                href="https://x.com/intent/post?text=If%20I%20had%20AI%20agents%20to%20work%20in%20my%20repositories%2024%2F7%20(see%20https%3A%2F%2Fdashboard.uithub.com)%20I%20would...">share
+                on X what you would use background code agents for</a>.</p>
+
+        <!-- Data Groups Container -->
+        <div id="data-container" class="grid gap-8"></div>
 
         <!-- Chat Box -->
         <div class="fixed bottom-4 right-4 bg-purple-900/30 border border-purple-800 p-4 rounded-lg shadow-lg w-80">
@@ -60,36 +73,23 @@
                 </button>
             </div>
         </div>
-
-        <p class="my-24 text-3xl">Thanks for requesting early access.Beta users will be added on a rolling basis.
-            Consider speeding up your admission by <a class="text-purple-600"
-                href="https://github.com/sponsors/janwilmake" target="_blank">sponsoring me</a> and <a target="_blank"
-                class="text-purple-600"
-                href="https://x.com/intent/post?text=If%20I%20had%20AI%20agents%20to%20work%20in%20my%20repositories%2024%2F7%20(see%20https%3A%2F%2Fdashboard.uithub.com)%20I%20would...">share
-                on X what you would use background code agents for</a>.</p>
-
-        <!-- Data Groups Container -->
-        <div id="data-container" class="grid gap-8"></div>
     </main>
 
     <script>
-        // Update scope button text
-        function updateScopeButton() {
-            const scopeButton = document.getElementById('scopeButton');
-            scopeButton.textContent = data.scope || 'Set Scope';
-        }
 
-        // Handle scope change
-        function changeScope() {
-            const currentScope = data.scope || '';
-            const newScope = window.prompt('Enter new scope:', currentScope);
 
-            if (newScope !== null) {
-                window.location.href = `/login?scope=${encodeURIComponent(newScope)}`;
+        // Update user profile
+        function updateUserProfile() {
+            if (data.sponsor) {
+                document.getElementById('userAvatar').src = data.sponsor.avatar_url || '/default-avatar.png';
+                document.getElementById('userName').textContent = data.sponsor.owner_login;
+                const balance = ((data.sponsor.clv || 0) - (data.sponsor.spent || 0)) / 100;
+                document.getElementById('userBalance').textContent = `Balance: $${balance.toFixed(2)}`;
             }
         }
 
-        // Render function
+
+
         function renderRepos() {
             const container = document.getElementById('data-container');
             const grouped = data.repos.reduce((acc, repo) => {
@@ -160,7 +160,7 @@
 
         // Initial render
         document.addEventListener('DOMContentLoaded', () => {
-            updateScopeButton();
+            updateUserProfile();
             renderRepos();
         });
     </script>
