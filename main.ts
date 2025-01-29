@@ -194,7 +194,7 @@ export default {
             />
             <meta
               property="og:image:alt"
-              content="Become a 1000X Dev by letting AI Agents get to work into your all your repos simultaneously."
+              content="Become a 1000X Dev by letting AI Agents get to work into your all your repos simultaneously  - even when you're away."
             />
             <meta property="og:image:width" content="1200" />
             <meta property="og:image:height" content="630" />
@@ -215,7 +215,7 @@ export default {
             />
             <meta
               name="twitter:description"
-              content="Become a 1000X Dev by letting AI Agents get to work into your all your repos simultaneously."
+              content="Become a 1000X Dev by letting AI Agents get to work into your all your repos simultaneously - even when you're away."
             />
             <meta
               name="twitter:image"
@@ -244,7 +244,7 @@ export default {
                 <p class="text-xl md:text-2xl text-gray-300 mb-6 md:mb-8">
                   UitHub is Your Home for AI-enhanced Software Development.
                   Become a 1000X Dev by letting AI Agents get to work into your
-                  all your repos simultaneously.
+                  all your repos simultaneously - even when you're away.
                 </p>
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                   <a
@@ -254,7 +254,9 @@ export default {
                       : "/login?scope=user:email"}"
                     class="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-lg font-medium transition-colors text-center text-white"
                   >
-                    ${sponsor.is_authenticated ? "Dashboard" : "Login"}
+                    ${sponsor.is_authenticated
+                      ? "Dashboard"
+                      : "Request Early Access"}
                   </a>
                   <a
                     href="https://github.com/janwilmake/uithub.dashboard"
