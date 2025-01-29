@@ -53,15 +53,13 @@ https://stackoverflow.com/questions/18492576/share-cookies-between-subdomain-and
 
 ✅ It's important that people can login from anywhere on uithub, to the came redirect uri, and then land back where they were. This helps not having to create soooo many clients. Let's confirm this is doable. Added possibility for passing redirect_uri
 
-To proof this works, try it at `uithub.cf` in production and ensure it actually redirects to `dashboard.uithub.com/callback` after logging in so we can use the same client.
+✅ To proof this works, try it at `uithub.cf` in production and ensure it actually redirects to `dashboard.uithub.com/callback` after logging in so we can use the same client.
 
-`COOKIE_DOMAIN_SHARING=true` should be a configurable param.
+✅ `COOKIE_DOMAIN_SHARING=true` should be a configurable param.
 
-See what happens if a user has disabled cookies (maybe in private its even default). Can they still login? if not, should be notified about it.
+✅ Login should just require `user:email`
 
-Login should just require `user:email` and in dashboard show warning and request to also see private repos.
-
-Upon login we can probably get the most wide scope we have access to with our client for the user. If it's wider than most recenltly requested, that's good to know and store in the cookie.
+In dashboard show warning and request to also see private repos if scope didn't include it yet
 
 Auth idea: Redirect 401 to `/login?redirect_uri=CURRENT` (which could redirect to site to callback and back to where i was). never problems logging in anymore! Wow!
 
@@ -69,11 +67,11 @@ Become my own sponsor using a different Github Account, for $50/m, to test it wo
 
 Learn more about the behavior of cookies and the specifications that are currently mostly implemented in 99% of used browsers. Write a thread on sponsorflare again and the concepts of sharing login across subdomains and the 'GitHub Automatic Login'.
 
-Ensure the method/URL is stored for every transaction.
+✅ Ensure the URL is stored for every transaction.
 
-Add endpoint `GET /usage` to get all transactions grouped by date and hostname, like openai does. Expose this as API as well at `GET /usage` (inside sponsorflare)
+✅ Add endpoint `GET /usage` to get all transactions grouped by date and hostname, like openai does.
 
-Show username, image, and balance (spent-clv) in header in a header, which opens `/usage` when clicking where you can see all details, logout, see balance, and see where to sponsor.
+Show username, image, and balance (spent-clv) in a header, which opens `/usage` when clicking where you can see all details, logout, see balance, and see where to sponsor.
 
 In `/usage` render stacked bar graph per date per hostname. Add ability to access it as data via `getUsage` fn.
 

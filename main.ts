@@ -1,5 +1,5 @@
 import dashboard from "./dashboard.html";
-import { Env, getSponsor, html, middleware } from "./sponsorflare";
+import { Env, getSponsor, html, middleware, getUsage } from "./sponsorflare";
 
 export default {
   fetch: async (request: Request, env: Env) => {
@@ -7,7 +7,8 @@ export default {
     const sponsorflare = await middleware(request, env);
     if (sponsorflare) return sponsorflare;
 
-    const sponsor = await getSponsor(request, env, { charge: 1 });
+    const sponsor = await getSponsor(request, env);
+
     const url = new URL(request.url);
     const cookie = request.headers.get("Cookie");
     const rows = cookie?.split(";").map((x) => x.trim());

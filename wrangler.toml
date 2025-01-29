@@ -9,6 +9,7 @@ routes = [
 [vars]
 GITHUB_REDIRECT_URI = "https://dashboard.uithub.com/callback"
 LOGIN_REDIRECT_URI = "/dashboard"
+COOKIE_DOMAIN_SHARING="true"
 
 [[durable_objects.bindings]]
 name = "SPONSOR_DO"
