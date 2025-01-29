@@ -186,7 +186,7 @@ export default {
             />
             <meta
               property="og:description"
-              content="Become a 1000X Dev by letting AI Agents get to work into your all your repos simultaneously."
+              content="Become a 1000X Dev by letting AI Agents get to work into your all your repos simultaneously - even when you're away."
             />
             <meta
               property="og:image"

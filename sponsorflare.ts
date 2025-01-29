@@ -66,6 +66,167 @@ interface ViewerData {
   }[];
 }
 
+interface Enterprise {}
+interface Installation {}
+interface Organization {}
+interface Repository {}
+
+interface User {
+  login: string;
+  id: number;
+  node_id: string;
+  [key: string]: any;
+}
+
+interface Maintainer {
+  node_id: string;
+  [key: string]: any;
+}
+
+interface Tier {
+  created_at: string;
+  description: string;
+  is_custom_ammount?: boolean;
+  is_custom_amount?: boolean;
+  is_one_time: boolean;
+  monthly_price_in_cents: number;
+  monthly_price_in_dollars: number;
+  name: string;
+  node_id: string;
+}
+
+interface Sponsorship {
+  created_at: string;
+  maintainer: Maintainer;
+  node_id: string;
+  privacy_level: string;
+  sponsor: User | null;
+  sponsorable: User | null;
+  tier: Tier;
+}
+
+interface SponsorEvent {
+  changes?: any;
+  enterprise?: Enterprise;
+  installation?: Installation;
+  organization?: Organization;
+  repository?: Repository;
+  sender: User;
+  sponsorship: Sponsorship;
+}
+
+export class SponsorDO {
+  private state: DurableObjectState;
+  private storage: DurableObjectStorage;
+
+  constructor(state: DurableObjectState) {
+    this.state = state;
+    this.storage = state.storage;
+  }
+
+  async fetch(request: Request) {
+    const url = new URL(request.url);
+
+    // Handle different operations based on the path
+    switch (url.pathname) {
+      case "/initialize":
+        const initData: {
+          sponsor: Sponsor;
+          access_token: string;
+          scope: string;
+        } = await request.json();
+
+        const already: Sponsor | undefined = await this.storage.get("sponsor", {
+          noCache: true,
+        });
+
+        await this.storage.put(
+          "sponsor",
+          {
+            ...(already || {}),
+            ...initData.sponsor,
+          },
+          { noCache: true, allowUnconfirmed: false },
+        );
+
+        if (initData.access_token) {
+          await this.storage.put(initData.access_token, initData.scope);
+        }
+
+        return new Response("Initialized", { status: 200 });
+
+      case "/verify":
+        const access_token = url.searchParams.get("token");
+        const hasToken = await this.storage.get(access_token!);
+        if (!hasToken) {
+          return new Response("Invalid token", { status: 401 });
+        }
+
+        const sponsor = await this.storage.get("sponsor");
+        return new Response(JSON.stringify(sponsor), {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        });
+
+      case "/charge":
+        const chargeAmount = Number(url.searchParams.get("amount"));
+        const idempotencyKey = url.searchParams.get("idempotency_key");
+
+        if (!idempotencyKey) {
+          return new Response("Idempotency key required", { status: 400 });
+        }
+
+        const chargeKey = `charge.${idempotencyKey}`;
+        const existingCharge = await this.storage.get(chargeKey);
+
+        if (existingCharge) {
+          return new Response(
+            JSON.stringify({
+              message: "Charge already processed",
+              charge: existingCharge,
+            }),
+            {
+              status: 200,
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+        }
+
+        const sponsor_data: Sponsor | undefined = await this.storage.get(
+          "sponsor",
+        );
+
+        if (!sponsor_data) {
+          return new Response("Sponsor not found", { status: 404 });
+        }
+
+        const updated = {
+          ...sponsor_data,
+          spent: (sponsor_data.spent || 0) + chargeAmount,
+        };
+        await this.storage.put("sponsor", updated);
+
+        // Record the charge with timestamp
+        await this.storage.put(chargeKey, {
+          amount: chargeAmount,
+          timestamp: Date.now(),
+        });
+
+        return new Response(JSON.stringify(updated), {
+          status: 200,
+          headers: {
+            "Content-Type": "application/json",
+            "Cache-Control": "no-store, no-cache, must-revalidate",
+            Pragma: "no-cache",
+            Expires: "0",
+          },
+        });
+
+      default:
+        return new Response("Not found", { status: 404 });
+    }
+  }
+}
 export async function fetchAllSponsorshipData(
   accessToken: string,
 ): Promise<ViewerData> {
@@ -229,55 +390,6 @@ function hexToBytes(hex: string) {
   return bytes;
 }
 
-interface Enterprise {}
-interface Installation {}
-interface Organization {}
-interface Repository {}
-
-interface User {
-  login: string;
-  id: number;
-  node_id: string;
-  [key: string]: any;
-}
-
-interface Maintainer {
-  node_id: string;
-  [key: string]: any;
-}
-
-interface Tier {
-  created_at: string;
-  description: string;
-  is_custom_ammount?: boolean;
-  is_custom_amount?: boolean;
-  is_one_time: boolean;
-  monthly_price_in_cents: number;
-  monthly_price_in_dollars: number;
-  name: string;
-  node_id: string;
-}
-
-interface Sponsorship {
-  created_at: string;
-  maintainer: Maintainer;
-  node_id: string;
-  privacy_level: string;
-  sponsor: User | null;
-  sponsorable: User | null;
-  tier: Tier;
-}
-
-interface SponsorEvent {
-  changes?: any;
-  enterprise?: Enterprise;
-  installation?: Installation;
-  organization?: Organization;
-  repository?: Repository;
-  sender: User;
-  sponsorship: Sponsorship;
-}
-
 // Helper function to generate a random string
 async function generateRandomString(length: number): Promise<string> {
   const randomBytes = new Uint8Array(length);
@@ -297,10 +409,19 @@ const callbackGetAccessToken = async (request: Request, env: Env) => {
   const urlState = url.searchParams.get("state");
   const cookie = request.headers.get("Cookie");
   const rows = cookie?.split(";").map((x) => x.trim());
+
   const stateCookie = rows
     ?.find((row) => row.startsWith("github_oauth_state"))
     ?.split("=")[1]
     .trim();
+
+  const redirectUriCookieRaw = rows
+    ?.find((row) => row.startsWith("redirect_uri"))
+    ?.split("=")[1]
+    .trim();
+  const redirectUriCookie = redirectUriCookieRaw
+    ? decodeURIComponent(redirectUriCookieRaw)
+    : undefined;
 
   if (!urlState || !stateCookie || urlState !== stateCookie) {
     return { error: `Invalid state`, status: 400 };
@@ -330,11 +451,18 @@ const callbackGetAccessToken = async (request: Request, env: Env) => {
 
   if (!tokenResponse.ok) throw new Error();
   const { access_token, scope }: any = await tokenResponse.json();
-  return { access_token, scope };
+  return { access_token, scope, redirectUriCookie };
 };
 
 export const middleware = async (request: Request, env: Env) => {
   const url = new URL(request.url);
+  // will be localhost for localhost, and uithub.com for cf.uithub.com. Ensures cookie is accepted across all subdomains
+  const domain = url.hostname
+    .split(".")
+    .reverse()
+    .slice(0, 2)
+    .reverse()
+    .join(".");
 
   // Login page route
 
@@ -452,24 +580,36 @@ export const middleware = async (request: Request, env: Env) => {
       return new Response("Environment variables are missing");
     }
 
-    // Create a response with HTTP-only state cookie
-    return new Response("Redirecting", {
-      status: 307,
-      headers: {
-        Location: `https://github.com/login/oauth/authorize?client_id=${
-          env.GITHUB_CLIENT_ID
-        }&redirect_uri=${encodeURIComponent(env.GITHUB_REDIRECT_URI)}&scope=${
-          scope || "user:email"
-        }&state=${state}`,
-        "Set-Cookie": `github_oauth_state=${state}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
-      },
+    const headers = new Headers({
+      Location: `https://github.com/login/oauth/authorize?client_id=${
+        env.GITHUB_CLIENT_ID
+      }&redirect_uri=${encodeURIComponent(env.GITHUB_REDIRECT_URI)}&scope=${
+        scope || "user:email"
+      }&state=${state}`,
     });
+
+    const redirect_uri =
+      url.searchParams.get("redirect_uri") || env.LOGIN_REDIRECT_URI;
+
+    headers.append(
+      "Set-Cookie",
+      `github_oauth_state=${state}; Domain=${domain}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
+    );
+    headers.append(
+      "Set-Cookie",
+      `redirect_uri=${encodeURIComponent(
+        redirect_uri,
+      )}; Domain=${domain}; HttpOnly; Path=/; Secure; SameSite=Lax; Max-Age=600`,
+    );
+
+    // Create a response with HTTP-only state cookie
+    return new Response("Redirecting", { status: 307, headers });
   }
 
   // GitHub OAuth callback route
   if (url.pathname === "/callback") {
     try {
-      const { error, status, access_token, scope } =
+      const { error, status, access_token, scope, redirectUriCookie } =
         await callbackGetAccessToken(request, env);
       if (error || !access_token) {
         return new Response(error, { status });
@@ -514,7 +654,8 @@ export const middleware = async (request: Request, env: Env) => {
 
       // Create response with cookies
       const headers = new Headers({
-        Location: url.origin + (env.LOGIN_REDIRECT_URI || "/"),
+        Location:
+          redirectUriCookie || url.origin + (env.LOGIN_REDIRECT_URI || "/"),
       });
 
       // on localhost, no 'secure' because we use http
@@ -524,26 +665,31 @@ export const middleware = async (request: Request, env: Env) => {
         "Set-Cookie",
         `authorization=${encodeURIComponent(
           `Bearer ${access_token}`,
-        )}; HttpOnly; Path=/;${securePart} Max-Age=34560000; SameSite=Lax`,
+        )}; Domain=${domain}; HttpOnly; Path=/;${securePart} Max-Age=34560000; SameSite=Lax`,
       );
 
       headers.append(
         "Set-Cookie",
         `owner_id=${encodeURIComponent(
           userData.id.toString(),
-        )}; HttpOnly; Path=/;${securePart} Max-Age=34560000; SameSite=Lax`,
+        )}; Domain=${domain}; HttpOnly; Path=/;${securePart} Max-Age=34560000; SameSite=Lax`,
       );
 
       headers.append(
         "Set-Cookie",
         `github_oauth_scope=${encodeURIComponent(
           scope,
-        )}; HttpOnly; Path=/;${securePart} Max-Age=34560000; SameSite=Lax`,
+        )}; Domain=${domain}; HttpOnly; Path=/;${securePart} Max-Age=34560000; SameSite=Lax`,
       );
 
       headers.append(
         "Set-Cookie",
-        `github_oauth_state=; HttpOnly; Path=/;${securePart} Max-Age=0; SameSite=Lax`,
+        `github_oauth_state=; Domain=${domain}; HttpOnly; Path=/;${securePart} Max-Age=0; SameSite=Lax`,
+      );
+
+      headers.append(
+        "Set-Cookie",
+        `redirect_uri=; Domain=${domain}; HttpOnly; Path=/;${securePart} Max-Age=0; SameSite=Lax`,
       );
 
       return new Response("Redirecting", { status: 307, headers });
