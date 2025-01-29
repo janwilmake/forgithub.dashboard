@@ -81,9 +81,9 @@ Allow adding further kv to the charge via config which can later also appear in 
 
 Create `wilmake.cftemplate` template which basically just has all basic files for a new repo including a package of sponsorflare, so I can start with `gh repo create --public abcabc -p wilmake.cftemplate`
 
-🔥 For the first time, I feel like I have a very powerful way of measuring work done with workers. Let's start using sponsorflare as a package and create a tempalte
+🔥 For the first time, I feel like I have a very powerful way of measuring work done with workers. Let's start using sponsorflare as a package and create a template.
 
-# Create powerful worker-creator guide and chat
+## Create powerful worker-creator guide and chat
 
 As a simple first demonstration of the product, create `uithub.chat` which simply proxies to chatcompletions.com/chat/completions but with key of R1, and charges the price needed. I already had docs.uithub.com/upstash-chat. Just use that one. Make it easy to put guides in context using select-boxes.
 
@@ -92,7 +92,7 @@ As a simple first demonstration of the product, create `uithub.chat` which simpl
 - include the sponsorflare.ts
 - put this prompt at a URL, easy to find.
 
-Release uithub.chat API and UX with limit to -1.00 balance.
+Release uithub.chat API and UX with limit to -1.00 balance after signup (redirect oauth after hitting submit with prompt stuck in localstorage)
 
 THIS IS WORTH A BIG AMOUNT OF LIKES IF I SHARE THE PROMPT. OR JUST CHAT?
 
@@ -105,3 +105,7 @@ THIS IS WORTH A BIG AMOUNT OF LIKES IF I SHARE THE PROMPT. OR JUST CHAT?
 5. At https://cf.uithub.com/owner, we need to use the same datapoint but render a more exploration friendly dashboard intended to understand what someone does. Can use the same data.forgithub.com/repos/x api!!!!
 
 Lets focus on making this context super worthy, and useful in order for a LLM to trim down what repos are significant for any given prompt.
+
+# Pitchdeck
+
+See [pitch-for-fund.md](./pitch-for-fund.md)
