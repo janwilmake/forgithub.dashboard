@@ -41,157 +41,156 @@ export default {
         });
       }
 
-      // const reposResponse = await fetch(
-      //   `https://cache.forgithub.com/repos/${sponsor.owner_login}`,
+      const apiKeyPart = access_token ? `&apiKey=${access_token}` : undefined;
+
+      const reposResponse = await fetch(
+        `http://nachocache.com/1d/stale/join.forgithub.com/${sponsor.owner_login}?datapoints=size&datapoints=details&datapoints=domain&datapoints=openapi${apiKeyPart}`,
+      );
+      if (!reposResponse.ok) {
+        return new Response("Something went wrong: " + reposResponse.status, {
+          status: reposResponse.status,
+        });
+      }
+
+      const joinData = await reposResponse.json();
+
+      // const repos = [
       //   {
-      //     headers: access_token
-      //       ? { Authorization: `Bearer ${access_token}` }
-      //       : undefined,
+      //     name: "api-gateway",
+      //     domain: "uithub.com",
+      //     openapi: {
+      //       summary: "Main API with 25 endpoints",
+      //       version: "3.1.0",
+      //     },
+      //     screenshot: null,
+      //     categories: ["API Gateway", "Node.js", "Redis"],
+      //     actions: { successRate: 0.92, lastRun: "2024-03-16T09:45:00Z" },
+      //     deployment: {
+      //       provider: "Cloudflare",
+      //       logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg",
+      //     },
+      //     links: {
+      //       github: "#",
+      //       uithub: "#",
+      //       website: "#",
+      //       openapi: "#",
+      //     },
       //   },
-      // );
-      // if (!reposResponse.ok) {
-      //   return new Response("Something went wrong: " + reposResponse.status, {
-      //     status: reposResponse.status,
-      //   });
-      // }
-
-      // const repoData = reposResponse.json();
-
-      const repos = [
-        {
-          name: "api-gateway",
-          domain: "uithub.com",
-          openapi: {
-            summary: "Main API with 25 endpoints",
-            version: "3.1.0",
-          },
-          screenshot: null,
-          categories: ["API Gateway", "Node.js", "Redis"],
-          actions: { successRate: 0.92, lastRun: "2024-03-16T09:45:00Z" },
-          deployment: {
-            provider: "Cloudflare",
-            logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg",
-          },
-          links: {
-            github: "#",
-            uithub: "#",
-            website: "#",
-            openapi: "#",
-          },
-        },
-        {
-          name: "auth-service",
-          domain: "dashboard.uithub.com",
-          openapi: {
-            summary: "Authentication API with OAuth2",
-            version: "2.4.1",
-          },
-          screenshot: null,
-          categories: ["Authentication", "TypeScript", "PostgreSQL"],
-          actions: { successRate: 0.88, lastRun: "2024-03-15T16:20:00Z" },
-          deployment: {
-            provider: "Vercel",
-            logo: "https://www.svgrepo.com/show/327408/logo-vercel.svg",
-          },
-          links: {
-            github: "#",
-            uithub: "#",
-            website: "#",
-            openapi: "#",
-          },
-        },
-        {
-          name: "payment-processor",
-          domain: "dashboard.uithub.com",
-          openapi: {
-            summary: "Payment processing endpoints",
-            version: "1.2.0",
-          },
-          screenshot: null,
-          categories: ["Payments", "Go", "MySQL"],
-          actions: { successRate: 0.95, lastRun: "2024-03-16T11:10:00Z" },
-          deployment: {
-            provider: "AWS",
-            logo: "https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg",
-          },
-          links: {
-            github: "#",
-            uithub: "#",
-            website: "#",
-            openapi: "#",
-          },
-        },
-        {
-          name: "analytics-dashboard",
-          domain: "analytics.example.com",
-          openapi: null,
-          screenshot: null,
-          categories: ["Analytics", "React", "TypeScript"],
-          actions: { successRate: 0.78, lastRun: "2024-03-14T14:15:00Z" },
-          deployment: {
-            provider: "Netlify",
-            logo: "https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg",
-          },
-          links: {
-            github: "#",
-            uithub: "#",
-            website: "#",
-            openapi: "#",
-          },
-        },
-        {
-          name: "email-service",
-          domain: "uithub.com",
-          openapi: {
-            summary: "Transactional email service",
-            version: "1.0.0",
-          },
-          screenshot: null,
-          categories: ["Communication", "Python", "Redis"],
-          actions: { successRate: 0.85, lastRun: "2024-03-16T08:30:00Z" },
-          deployment: {
-            provider: "Google Cloud",
-            logo: "https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg",
-          },
-          links: {
-            github: "#",
-            uithub: "#",
-            website: "#",
-            openapi: "#",
-          },
-        },
-        {
-          name: "cdn-edge",
-          domain: "dashboard.uithub.com",
-          openapi: null,
-          screenshot: null,
-          categories: ["CDN", "Rust", "WASM"],
-          actions: { successRate: 0.97, lastRun: "2024-03-16T10:00:00Z" },
-          deployment: {
-            provider: "Cloudflare",
-            logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg",
-          },
-          links: {
-            github: "#",
-            uithub: "#",
-            website: "#",
-            openapi: "#",
-          },
-        },
-      ];
+      //   {
+      //     name: "auth-service",
+      //     domain: "dashboard.uithub.com",
+      //     openapi: {
+      //       summary: "Authentication API with OAuth2",
+      //       version: "2.4.1",
+      //     },
+      //     screenshot: null,
+      //     categories: ["Authentication", "TypeScript", "PostgreSQL"],
+      //     actions: { successRate: 0.88, lastRun: "2024-03-15T16:20:00Z" },
+      //     deployment: {
+      //       provider: "Vercel",
+      //       logo: "https://www.svgrepo.com/show/327408/logo-vercel.svg",
+      //     },
+      //     links: {
+      //       github: "#",
+      //       uithub: "#",
+      //       website: "#",
+      //       openapi: "#",
+      //     },
+      //   },
+      //   {
+      //     name: "payment-processor",
+      //     domain: "dashboard.uithub.com",
+      //     openapi: {
+      //       summary: "Payment processing endpoints",
+      //       version: "1.2.0",
+      //     },
+      //     screenshot: null,
+      //     categories: ["Payments", "Go", "MySQL"],
+      //     actions: { successRate: 0.95, lastRun: "2024-03-16T11:10:00Z" },
+      //     deployment: {
+      //       provider: "AWS",
+      //       logo: "https://www.vectorlogo.zone/logos/amazon_aws/amazon_aws-icon.svg",
+      //     },
+      //     links: {
+      //       github: "#",
+      //       uithub: "#",
+      //       website: "#",
+      //       openapi: "#",
+      //     },
+      //   },
+      //   {
+      //     name: "analytics-dashboard",
+      //     domain: "analytics.example.com",
+      //     openapi: null,
+      //     screenshot: null,
+      //     categories: ["Analytics", "React", "TypeScript"],
+      //     actions: { successRate: 0.78, lastRun: "2024-03-14T14:15:00Z" },
+      //     deployment: {
+      //       provider: "Netlify",
+      //       logo: "https://www.vectorlogo.zone/logos/netlify/netlify-icon.svg",
+      //     },
+      //     links: {
+      //       github: "#",
+      //       uithub: "#",
+      //       website: "#",
+      //       openapi: "#",
+      //     },
+      //   },
+      //   {
+      //     name: "email-service",
+      //     domain: "uithub.com",
+      //     openapi: {
+      //       summary: "Transactional email service",
+      //       version: "1.0.0",
+      //     },
+      //     screenshot: null,
+      //     categories: ["Communication", "Python", "Redis"],
+      //     actions: { successRate: 0.85, lastRun: "2024-03-16T08:30:00Z" },
+      //     deployment: {
+      //       provider: "Google Cloud",
+      //       logo: "https://www.vectorlogo.zone/logos/google_cloud/google_cloud-icon.svg",
+      //     },
+      //     links: {
+      //       github: "#",
+      //       uithub: "#",
+      //       website: "#",
+      //       openapi: "#",
+      //     },
+      //   },
+      //   {
+      //     name: "cdn-edge",
+      //     domain: "dashboard.uithub.com",
+      //     openapi: null,
+      //     screenshot: null,
+      //     categories: ["CDN", "Rust", "WASM"],
+      //     actions: { successRate: 0.97, lastRun: "2024-03-16T10:00:00Z" },
+      //     deployment: {
+      //       provider: "Cloudflare",
+      //       logo: "https://www.vectorlogo.zone/logos/cloudflare/cloudflare-icon.svg",
+      //     },
+      //     links: {
+      //       github: "#",
+      //       uithub: "#",
+      //       website: "#",
+      //       openapi: "#",
+      //     },
+      //   },
+      // ];
 
       return new Response(
         dashboardHtml.replace(
           "<script>",
-          `<script>\nconst data = ${JSON.stringify({
-            sponsor,
-            scope,
-            repos,
-          })}\n\n`,
+          `<script>\nconst data = ${JSON.stringify(
+            {
+              sponsor,
+              scope,
+              joinData,
+            },
+            undefined,
+            2,
+          )};\n\n`,
         ),
-        {
-          headers: { "content-type": "text/html" },
-        },
+        { headers: { "content-type": "text/html" } },
       );
     }
 
