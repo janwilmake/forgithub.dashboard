@@ -14,6 +14,11 @@
 
         .screenshot-placeholder {
             background: linear-gradient(45deg, #1e1b2e 25%, #2d1b3d 50%, #1e1b2e 75%);
+            aspect-ratio: 1.91 / 1;
+        }
+
+        .screenshot-container {
+            aspect-ratio: 1.91 / 1;
         }
     </style>
 </head>
@@ -36,8 +41,6 @@
             </div>
 
             <div class="flex items-center">
-
-
                 <!-- User Profile Section -->
                 <a href="/usage"
                     class="flex items-center gap-3 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
@@ -47,20 +50,11 @@
                         <span id="userBalance" class="text-xs text-gray-400"></span>
                     </div>
                 </a>
-
             </div>
         </div>
 
-        <!-- Rest of the content remains the same -->
-        <p class="my-24 text-3xl">Thanks for requesting early access. Beta users will be added on a rolling basis.
-            Consider speeding up your admission by <a class="text-purple-600"
-                href="https://github.com/sponsors/janwilmake" target="_blank">sponsoring me</a> and <a target="_blank"
-                class="text-purple-600"
-                href="https://x.com/intent/post?text=If%20I%20had%20AI%20agents%20to%20work%20in%20my%20repositories%2024%2F7%20(see%20https%3A%2F%2Fdashboard.uithub.com)%20I%20would...">share
-                on X what you would use background code agents for</a>.</p>
-
-        <!-- Data Groups Container -->
-        <div id="data-container" class="grid gap-8"></div>
+        <!-- Repository Grid -->
+        <div id="repo-grid" class="grid md:grid-cols-2 gap-4"></div>
 
         <!-- Chat Box -->
         <div class="fixed bottom-4 right-4 bg-purple-900/30 border border-purple-800 p-4 rounded-lg shadow-lg w-80">
@@ -76,8 +70,6 @@
     </main>
 
     <script>
-
-
         // Update user profile
         function updateUserProfile() {
             if (data.sponsor) {
@@ -88,74 +80,81 @@
             }
         }
 
-
-
         function renderRepos() {
-            const container = document.getElementById('data-container');
-            const grouped = data.repos.reduce((acc, repo) => {
-                const domainGroup = acc[repo.domain] || {};
-                const category = repo.categories[0];
-                domainGroup[category] = [...(domainGroup[category] || []), repo];
-                return { ...acc, [repo.domain]: domainGroup };
-            }, {});
+            const container = document.getElementById('repo-grid');
 
-            Object.entries(grouped).forEach(([domain, categories]) => {
-                const domainSection = document.createElement('div');
-                domainSection.className = 'bg-purple-900/30 border border-purple-800 p-6 rounded-xl';
-                domainSection.innerHTML = `
-                    <h2 class="text-xl font-semibold mb-4">${domain}</h2>
-                    <div class="grid md:grid-cols-2 gap-4" id="${domain.replace(/\./g, '-')}-container"></div>
-                `;
+            if (!data.repos || data.repos.length === 0) {
+                container.innerHTML = `
+                    <p class="col-span-2 my-24 text-3xl">Thanks for requesting early access. Beta users will be added on a rolling basis.
+                        Consider speeding up your admission by <a class="text-purple-600"
+                            href="https://github.com/sponsors/janwilmake" target="_blank">sponsoring me</a> and <a target="_blank"
+                            class="text-purple-600"
+                            href="https://x.com/intent/post?text=If%20I%20had%20AI%20agents%20to%20work%20in%20my%20repositories%2024%2F7%20(see%20https%3A%2F%2Fdashboard.uithub.com)%20I%20would...">share
+                            on X what you would use background code agents for</a>.</p>`;
+                return;
+            }
 
-                Object.entries(categories).forEach(([category, repos]) => {
-                    const categoryContainer = domainSection.querySelector(`#${domain.replace(/\./g, '-')}-container`);
-                    repos.forEach(repo => {
-                        const repoCard = document.createElement('div');
-                        repoCard.className = 'bg-purple-800/30 p-4 rounded-lg';
-                        repoCard.innerHTML = `
-                            <div class="flex justify-between items-start mb-4">
-                                <div>
-                                    <h3 class="font-medium">${repo.name}</h3>
-                                    <p class="text-sm text-gray-400">Last updated ${new Date(repo.actions.lastRun).toLocaleDateString()}</p>
-                                </div>
-                                <img src="${repo.deployment.logo}" class="w-8 h-8 rounded" alt="${repo.deployment.provider}">
+            // Sort repos by updated_at (recent first)
+            const sortedRepos = [...data.repos].sort((a, b) =>
+                new Date(b.updated_at) - new Date(a.updated_at)
+            );
+
+            container.innerHTML = sortedRepos.map(repo => `
+                <div class="bg-purple-900/30 border border-purple-800 p-4 rounded-lg">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="font-medium">${repo.full_name}</h3>
+                            ${repo.description ? `
+                                <p class="text-sm text-gray-400 mt-1">${repo.description}</p>
+                            ` : ''}
+                            <p class="text-sm text-gray-400 mt-1">Size: ${repo.size}KB</p>
+                        </div>
+                        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" 
+                             class="w-8 h-8 rounded" alt="GitHub">
+                    </div>
+
+                    <div class="screenshot-container w-full overflow-hidden rounded mb-4">
+                        ${repo.screenshotUrl ? `
+                            <img src="${repo.screenshotUrl}" 
+                                 class="w-full h-full object-cover" 
+                                 alt="Repository screenshot">
+                        ` : `
+                            <div class="screenshot-placeholder w-full h-full flex items-center justify-center text-gray-400">
+                                Screenshot Preview
                             </div>
+                        `}
+                    </div>
 
-                            <div class="screenshot-placeholder w-full h-32 rounded mb-4 flex items-center justify-center text-gray-400">
-                                ${repo.screenshot ? `<img src="${repo.screenshot}" alt="Screenshot">` : 'Screenshot Preview'}
-                            </div>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        <span class="bg-purple-700/50 px-2 py-1 rounded text-xs">Default</span>
+                    </div>
 
-                            <div class="flex flex-wrap gap-2 mb-4">
-                                ${repo.categories.map(cat => `
-                                    <span class="bg-purple-700/50 px-2 py-1 rounded text-xs">${cat}</span>
-                                `).join('')}
-                            </div>
-
-                            <div class="flex justify-between items-center text-sm">
-                                <div class="flex items-center gap-2">
-                                    <div class="w-2 h-2 ${repo.actions.successRate > 0.9 ? 'bg-green-500' : 'bg-pink-500'} rounded-full"></div>
-                                    <span>Actions: ${Math.round(repo.actions.successRate * 100)}% success</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    ${repo.openapi ? `
-                                    <button class="text-pink-400 hover:text-pink-300" title="Fetch OpenAPI">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                                        </svg>
-                                    </button>` : ''}
-                                    <button class="text-gray-400 hover:text-gray-300" title="Links">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                        `;
-                        categoryContainer.appendChild(repoCard);
-                    });
-                });
-                container.appendChild(domainSection);
-            });
+                    <div class="flex justify-between items-center text-sm">
+                        <div class="flex items-center gap-2">
+                            <div class="w-2 h-2 bg-green-500 rounded-full"></div>
+                            <span>Active</span>
+                        </div>
+                        <div class="flex gap-2">
+                            ${repo.homepage ? `
+                                <a href="${repo.homepage}" target="_blank" 
+                                   class="text-gray-400 hover:text-gray-300" title="Visit homepage">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                                    </svg>
+                                </a>
+                            ` : ''}
+                            <a href="${repo.url}" target="_blank" 
+                               class="text-gray-400 hover:text-gray-300" title="View on GitHub">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                          d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.71c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .26.18.58.69.48C19.14 20.17 22 16.42 22 12c0-5.523-4.477-10-10-10z"/>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Initial render
