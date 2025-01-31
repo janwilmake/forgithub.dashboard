@@ -8,7 +8,7 @@ impact: brings everything i've built together
 > [!NOTE]
 > This is a Work in Progress, built out from https://github.com/janwilmake/cloudflare-sponsorware. [Follow the progress in this thread](https://x.com/janwilmake/status/1883817352287924463)
 
-Goal: bring all insights you want to see about your repos/sites/apps in 1 place.
+Goal: bring all useful datapoints together for a subset of repos in a cached JSON and UI. Anything you want to see about your repos/sites/apps. UI where you can switch between different datasets from `forgithub.join`, and view them in several ways.
 
 - regular details
 - hosted domain (domain.forgithub.com)
@@ -37,7 +37,7 @@ Layout:
 
 # How to run this locally
 
-- run sponsorware at localhost:3001 (or elsewhere)
+- run `sponsorware` at localhost:3001 (or elsewhere)
 - run this at 3000. it will now connect to the real DO in production!
 
 # TODO: THIS IS THE SHIT
@@ -68,45 +68,6 @@ https://stackoverflow.com/questions/18492576/share-cookies-between-subdomain-and
 ✅ Show username, image, and balance (Spent-CLV) in a header, which opens `/usage` when clicking where you can see all details, logout, see balance, and see where to sponsor.
 
 ✅ Usage page: render stacked bar graph per date per hostname. Add ability to access it as data via `getUsage` fn.
-
-# Data
-
-Ensure data.forgithub.com/repos/x shows https://cache.forgithub.com/repos as well as # tokens and links to interesting contexts and derivations.
-
-When logging in into dashboard.uithub.com, ensure I have permission for listening to all webhooks, and do this with the proper callbacks!
-
-Insight: In the end, what I need is an actionschema that knows the dependencies and ensures to call them when an update occurs.
-
-## githubwatch
-
-1. Actually subscribe to watching all repos upon login (via a waituntil+scheduled api call).
-2. Ensure per user I know the source (where/when they logged in)
-3. Ensure the watching all lands in cache
-4. Watch also triggers calculating all repo stuff, so we end up with a file of all repos + calcs that is refreshed each time something changes. 🐐
-
-At data.forgithub or join.forgithub, idontrememba,.... ensure we have the most fresh data for the important datapoints available.
-
-## Dashboard ❗️❗️❗️
-
-2. render data.forgithub.com/repos/x up-to-date repos at dashboard (superfast) and make it pretty.
-3. Create text-version for data.forgithub.com for dashboard.uithub.com and for uithub.com/x
-4. Focus: file.forgithub.com or config.forgithub.com. select a specific config file (readme, openapi, spec, etc) and view all repos, categorized, with half of space dedicated to this one file.
-5. At https://cf.uithub.com/owner, we need to use the same datapoint but render a more exploration friendly dashboard intended to understand what someone does. Can use the same data.forgithub.com/repos/x api!
-
-Lets focus on making this context super worthy, and useful in order for a LLM to trim down what repos are significant for any given prompt.
-
-## Create powerful worker-creator guide and chat
-
-As a simple first demonstration of the product, create `uithub.chat` which simply proxies to chatcompletions.com/chat/completions but with key of R1, and charges the price needed. I already had docs.uithub.com/upstash-chat. Just use that one. Make it easy to put guides in context using select-boxes.
-
-- DO for schedule, do for queue, do for kv/sql... document DOs with some very good examples and how it works in very few tokens
-- create a very good prompt that generates all needed files for a worker besides the template from some simple natural language
-- include the sponsorflare.ts
-- put this prompt at a URL, easy to find.
-
-Release uithub.chat API and UX with limit to -1.00 balance after signup (redirect oauth after hitting submit with prompt stuck in localstorage)
-
-THIS IS WORTH A BIG AMOUNT OF LIKES IF I SHARE THE PROMPT. OR JUST CHAT?
 
 # Pitchdeck
 
