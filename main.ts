@@ -11,13 +11,21 @@ import usageHtml from "./usage.html";
 
 export default {
   fetch: async (request: Request, env: Env) => {
+    const url = new URL(request.url);
+    // if (url.hostname.endsWith("githus.com")) {
+    //   return new Response("Redirecting", {
+    //     status: 302,
+    //     headers: {
+    //       Location: `https://dashboard.uithub.com` + url.pathname + url.search,
+    //     },
+    //   });
+    // }
     // Handle sponsorflare auth
     const sponsorflare = await middleware(request, env);
     if (sponsorflare) return sponsorflare;
 
     const sponsor = await getSponsor(request, env);
 
-    const url = new URL(request.url);
     const { scope, access_token, owner_id } = getCookies(request);
 
     if (
@@ -151,6 +159,28 @@ export default {
               content="width=device-width, initial-scale=1.0"
             />
             <title>The Agent-Powered GitHub Dashboard For 1000X Devs</title>
+
+            <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+            <link
+              rel="apple-touch-icon"
+              sizes="180x180"
+              href="/apple-touch-icon.png"
+            />
+            <link
+              rel="icon"
+              type="image/png"
+              sizes="32x32"
+              href="/favicon-32x32.png"
+            />
+            <link
+              rel="icon"
+              type="image/png"
+              sizes="16x16"
+              href="/favicon-16x16.png"
+            />
+            <link rel="manifest" href="/site.webmanifest" />
+
             <meta
               name="description"
               content="Become a 1000X Dev by letting AI Agents get to work into your all your repos simultaneously."
@@ -219,6 +249,12 @@ export default {
             <main class="max-w-6xl mx-auto px-4 py-8 md:py-16">
               <!-- Hero Section -->
               <div class="text-center mb-12 md:mb-20">
+                <div
+                  class="text-[200px] font-bold bg-gradient-to-r from-purple-600 to-pink-400 text-transparent bg-clip-text"
+                >
+                  ⌂
+                </div>
+
                 <h1
                   class="text-4xl md:text-7xl font-bold mb-4 md:mb-6 bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent leading-tight"
                 >

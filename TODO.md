@@ -16,7 +16,11 @@ Use AI to write a function that just nicely renders it as markdown.
 
 If focus is provided, will also show a .md page
 
-## openapi.json
+🔥 Confirm `dashboard.md` as context works. Now, add githuw (context-driven LLM chat) uithub.cf header, and also uithub, why not?
+
+Be sure to do one more iteration on chat (nav and some bugs) - then ask people to test to use this - and then prepare a 'announching uithub chat' post.
+
+## `openapi.json`
 
 make openapi that documents the use of `dashboard.json` and `dashboard.md`
 
@@ -30,8 +34,12 @@ make openapi that documents the use of `dashboard.json` and `dashboard.md`
 
 ## `grid.html`
 
-renders ag-grid which just loads from `dashboard.json`
+Renders ag-grid which just loads from `/dashboard.json` via frontend
 
 ## https://cf.uithub.com/[owner]
 
 We need to use the same datapoint but render a more exploration friendly dashboard intended to understand what someone does. Can use the same `dashboard.json/md` api!
+
+## Stars tab
+
+- all repos you've starred should show up here
