@@ -49,15 +49,27 @@
             <!-- View Toggle Buttons -->
             <div class="flex gap-3">
                 <a href="dashboard.md"
-                    class="bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    class="flex items-center gap-2 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                     <span class="text-sm">LLM Context</span>
                 </a>
                 <a href="dashboard.json"
-                    class="bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    class="flex items-center gap-2 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+                    </svg>
                     <span class="text-sm">Raw Data</span>
                 </a>
                 <a href="grid.html"
-                    class="bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    class="flex items-center gap-2 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                    </svg>
                     <span class="text-sm">Table View</span>
                 </a>
             </div>
@@ -75,13 +87,11 @@
             </div>
         </div>
 
-        <!-- Rest of the content remains the same -->
-        <p class="my-24 text-3xl">Thanks for requesting early access. Beta users will be added on a rolling basis.
-            Consider speeding up your admission by <a class="text-purple-600"
-                href="https://github.com/sponsors/janwilmake" target="_blank">sponsoring me</a> and <a target="_blank"
-                class="text-purple-600"
-                href="https://x.com/intent/post?text=If%20I%20had%20AI%20agents%20to%20work%20in%20my%20repositories%2024%2F7%20(see%20https%3A%2F%2Fdashboard.uithub.com)%20I%20would...">share
-                on X what you would use background code agents for</a>.</p>
+        <!-- Owner Banner (when viewing other's repos) -->
+        <div id="ownerBanner" class="hidden mb-6 p-4 bg-purple-900/30 border border-purple-800 rounded-lg">
+            <p class="text-lg font-medium">Viewing repositories of <span id="ownerName" class="text-purple-400"></span>
+            </p>
+        </div>
 
         <!-- Repository Grid -->
         <div id="repo-grid" class="grid md:grid-cols-2 gap-4"></div>
@@ -89,7 +99,7 @@
         <!-- Chat Box -->
         <div class="fixed bottom-4 right-4 bg-purple-900/30 border border-purple-800 p-4 rounded-lg shadow-lg w-80">
             <div class="flex flex-col gap-3">
-                <textarea class="bg-purple-800/30 rounded p-2 text-sm"
+                <textarea class="bg-purple-800/30 rounded p-2 text-sm resize-none"
                     placeholder="Enter task for selected repos..."></textarea>
                 <button
                     class="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-3 py-1 rounded text-sm">
@@ -113,8 +123,19 @@
         function renderRepos() {
             const container = document.getElementById('repo-grid');
 
+            // Show owner banner if viewing other's repos
+            const ownerBanner = document.getElementById('ownerBanner');
+            const ownerName = document.getElementById('ownerName');
+            if (data.sponsor && data.owner !== data.sponsor.owner_login) {
+                ownerBanner.classList.remove('hidden');
+                ownerName.textContent = data.owner;
+            }
+
             if (!data.repos || data.repos.length === 0) {
-                container.innerHTML = `No repos found`;
+                container.innerHTML = `
+                    <div class="col-span-2 text-center py-8 text-gray-400">
+                        No repositories found
+                    </div>`;
                 return;
             }
 
@@ -133,8 +154,6 @@
                             ` : ''}
                             <p class="text-sm text-gray-400 mt-1">Size: ${repo.size}KB</p>
                         </div>
-                        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" 
-                             class="w-8 h-8 rounded" alt="GitHub">
                     </div>
 
                     <div class="screenshot-container w-full overflow-hidden rounded mb-4">
@@ -153,23 +172,32 @@
                         <span class="bg-purple-700/50 px-2 py-1 rounded text-xs">Default</span>
                     </div>
 
-                    <div class="flex justify-between items-center text-sm">
+                    <div class="flex justify-between items-center">
                         <div class="flex items-center gap-2">
                             <div class="w-2 h-2 bg-green-500 rounded-full"></div>
-                            <span>Active</span>
+                            <span class="text-sm">Active</span>
                         </div>
-                        <div class="flex gap-2">
-                            ${repo.homepage ? `
-                                <a href="${repo.homepage}" target="_blank" 
-                                   class="text-gray-400 hover:text-gray-300" title="Visit homepage">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
-                                              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                                    </svg>
-                                </a>
-                            ` : ''}
-                            <a href="${repo.url}" target="_blank" 
-                               class="text-gray-400 hover:text-gray-300" title="View on GitHub">
+                        
+                        <div class="flex gap-3">
+                            <a href="${repo.chatUrl}" 
+                               class="flex items-center gap-2 text-gray-400 hover:text-purple-400 transition-colors" 
+                               title="Open Chat">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                                </svg>
+                            </a>
+                            <a href="${repo.contextUrl}" 
+                               class="flex items-center gap-2 text-gray-400 hover:text-purple-400 transition-colors" 
+                               title="View Context">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </a>
+                            <a href="${repo.githubUrl}" target="_blank"
+                               class="flex items-center gap-2 text-gray-400 hover:text-purple-400 transition-colors" 
+                               title="View on GitHub">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                           d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.71c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02.8-.22 1.65-.33 2.5-.33.85 0 1.7.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .26.18.58.69.48C19.14 20.17 22 16.42 22 12c0-5.523-4.477-10-10-10z"/>
@@ -186,6 +214,7 @@
             updateUserProfile();
             renderRepos();
         });
+
     </script>
 </body>
 

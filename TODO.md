@@ -2,7 +2,7 @@
 
 Create endpoint `dashboard.uithub.com/dashboard.json` that:
 
-- use `join.forgithub.com` but with a `nachocache` in front
+- ✅ Use `join.forgithub.com` but with a `nachocache` in front
 - Returns KV value immediately (or loads if not yet or `?refresh=true`)
 - Calls `waitUntil` that calls queue to fetch from `join` if KV >1h old or if there was a `?refresh=true`
 - has README.md, CHANGELOG.md, SPEC.md, TODO.md, ADR.md, size, and openapiSummary
@@ -14,7 +14,7 @@ Does this just for all repos from the last 30 days (for now) to prevent ratelimi
 
 Use AI to write a function that just nicely renders it as markdown.
 
-If focus is provided, will also show a .md page
+If focus is provided, will also show one of the long datapoints (.md pages)
 
 🔥 Confirm `dashboard.md` as context works. Now, add githuw (context-driven LLM chat) uithub.cf header, and also uithub, why not?
 

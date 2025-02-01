@@ -59,12 +59,18 @@ export default {
     const [owner, page] = url.pathname.split("/").slice(1);
 
     if (owner && page) {
-      const apiKeyPart = access_token ? `&apiKey=${access_token}` : undefined;
-
-      const reposResponse = await fetch(
-        `http://nachocache.com/1d/stale/join.forgithub.com/${sponsor.owner_login}?datapoints=size&datapoints=details&datapoints=domain&datapoints=openapi${apiKeyPart}`,
-      );
+      const apiKeyPart =
+        access_token &&
+        owner.toLowerCase() === sponsor.owner_login?.toLowerCase()
+          ? `&apiKey=${access_token}`
+          : "";
+      //&datapoints=details&datapoints=domain&datapoints=openapi
+      const joinUrl = `http://nachocache.com/1d/stale/join.forgithub.com/${owner}?datapoints=details${apiKeyPart}`;
+      const reposResponse = await fetch(joinUrl);
+      console.log({ joinUrl });
       if (!reposResponse.ok) {
+        const text = await reposResponse.text();
+        console.log({ joinUrl, text });
         return new Response("Something went wrong: " + reposResponse.status, {
           status: reposResponse.status,
         });
@@ -75,6 +81,7 @@ export default {
         responses?: {
           [owner: string]: {
             [repo: string]: {
+              size: {};
               details: {
                 full_name: string;
                 description: string;
@@ -88,11 +95,11 @@ export default {
         };
       } = await reposResponse.json();
 
-      const ownerResponse = joinData.responses?.[sponsor.owner_login!];
+      const ownerResponse = joinData.responses?.[owner];
 
       const repos = ownerResponse
         ? Object.keys(ownerResponse).map((key) => {
-            const item = joinData.responses![sponsor.owner_login!][key];
+            const item = joinData.responses![owner][key];
             const { full_name, description, homepage, size, updated_at } =
               item.details || {};
             return {
@@ -101,13 +108,16 @@ export default {
               homepage,
               size,
               updated_at,
-              url: `https://github.com/${full_name}`,
+              githubUrl: `https://github.com/${full_name}`,
+              chatUrl: `https://githuw.com/${full_name}`,
+              contextUrl: `https://uithub.com/${full_name}`,
               screenshotUrl: homepage
                 ? `https://quickog.com/screenshot/${homepage}`
                 : null,
             };
           })
         : undefined;
+
       if (page === "dashboard.json") {
         return new Response(
           JSON.stringify({ repos, context: undefined }, undefined, 2),
@@ -116,6 +126,9 @@ export default {
       }
 
       if (page === "dashboard.md") {
+        const focus = url.searchParams.get("focus");
+        // If focus is provided, will also show a .md page
+
         const markdown = repos
           ?.map((item) =>
             Object.keys(item)
@@ -147,12 +160,13 @@ export default {
         return new Response(
           dashboardHtml.replace(
             "<script>",
-            `<script>\nconst data = ${JSON.stringify(
+            `<script>\nwindow.data = ${JSON.stringify(
               {
                 sponsor,
                 scope,
                 joinData,
                 repos,
+                owner,
               },
               undefined,
               2,
