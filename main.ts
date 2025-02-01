@@ -12,6 +12,21 @@ import gridHtml from "./grid.html";
 
 export default {
   fetch: async (request: Request, env: Env) => {
+    // CORS handling
+    if (request.method === "OPTIONS") {
+      return new Response(null, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      });
+    }
+    const corsHeaders = {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    };
     const url = new URL(request.url);
 
     const sponsorflare = await middleware(request, env);
@@ -26,11 +41,12 @@ export default {
       if (!usage.usage) {
         return new Response(usage.error || "Couldn't get usage", {
           status: 400,
+          headers: corsHeaders,
         });
       }
       return new Response(JSON.stringify(usage.usage, undefined, 2), {
         status: 200,
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", ...corsHeaders },
       });
     }
 
@@ -39,6 +55,7 @@ export default {
       if (!usage.usage) {
         return new Response(usage.error || "Couldn't get usage", {
           status: 400,
+          headers: corsHeaders,
         });
       }
 
@@ -121,7 +138,10 @@ export default {
       if (page === "dashboard.json") {
         return new Response(
           JSON.stringify({ repos, context: undefined }, undefined, 2),
-          { status: 200, headers: { "content-type": "application/json" } },
+          {
+            status: 200,
+            headers: { "content-type": "application/json", ...corsHeaders },
+          },
         );
       }
 
@@ -138,7 +158,7 @@ export default {
           .join("\n\n--------\n\n");
         return new Response(markdown, {
           status: 200,
-          headers: { "content-type": "text/markdown" },
+          headers: { "content-type": "text/markdown", ...corsHeaders },
         });
       }
 
@@ -152,7 +172,7 @@ export default {
               2,
             )};\n\n`,
           ),
-          { headers: { "content-type": "text/html" } },
+          { headers: { "content-type": "text/html", ...corsHeaders } },
         );
       }
 
@@ -172,7 +192,7 @@ export default {
               2,
             )};\n\n`,
           ),
-          { headers: { "content-type": "text/html" } },
+          { headers: { "content-type": "text/html", ...corsHeaders } },
         );
       }
     }
@@ -364,7 +384,7 @@ export default {
             </main>
           </body>
         </html>`,
-      { headers: { "content-type": "text/html" } },
+      { headers: { "content-type": "text/html", ...corsHeaders } },
     );
   },
 };
