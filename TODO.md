@@ -1,8 +1,13 @@
+✅ Use `join.forgithub.com` but with a `nachocache` in front. Just details for now
+
+✅ `/owner/grid.html` Renders ag-grid which just loads from `/dashboard.json` via frontend
+
+✅ Allow viewing someone elses dashboard too (public only)
+
 ## `/owner/dashboard.json` (2025-01-31)
 
 Create endpoint `dashboard.uithub.com/dashboard.json` that:
 
-- ✅ Use `join.forgithub.com` but with a `nachocache` in front
 - Returns KV value immediately (or loads if not yet or `?refresh=true`)
 - Calls `waitUntil` that calls queue to fetch from `join` if KV >1h old or if there was a `?refresh=true`
 - has README.md, CHANGELOG.md, SPEC.md, TODO.md, ADR.md, size, and openapiSummary
@@ -12,7 +17,7 @@ Does this just for all repos from the last 30 days (for now) to prevent ratelimi
 
 ## `/[owner]/dashboard.md?focus=[datapoint]`
 
-Use AI to write a function that just nicely renders it as markdown.
+✅ Write simple function that just nicely renders it as markdown.
 
 If focus is provided, will also show one of the long datapoints (.md pages)
 
@@ -26,15 +31,11 @@ Make openapi that documents the use of `dashboard.json` and `dashboard.md`
 
 ## `/[owner]/dashboard.html` UI
 
-- link to show raw data
+- ✅ link to show raw data
+- ✅ clear buttons linking to useful things like uithub, github, website, forgithub (other tools)
 - at the top, select what to view in the right pane
 - at the top, add search that matches on full_name
 - show repo card with screenshot on the left, pane at the right that renders a datapoint such as README.md, CHANGELOG.md, SPEC.md, TODO.md, ADR.md, size, and openapiSummary
-- clear buttons linking to useful things like uithub, github, website, forgithub (other tools)
-
-## `/owner/grid.html`
-
-Renders ag-grid which just loads from `/dashboard.json` via frontend
 
 ## https://cf.uithub.com/[owner]
 
