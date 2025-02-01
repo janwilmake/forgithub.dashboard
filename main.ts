@@ -8,112 +8,18 @@ import {
 } from "sponsorflare";
 import dashboardHtml from "./dashboard.html";
 import usageHtml from "./usage.html";
+import gridHtml from "./grid.html";
 
 export default {
   fetch: async (request: Request, env: Env) => {
     const url = new URL(request.url);
-    // if (url.hostname.endsWith("githus.com")) {
-    //   return new Response("Redirecting", {
-    //     status: 302,
-    //     headers: {
-    //       Location: `https://dashboard.uithub.com` + url.pathname + url.search,
-    //     },
-    //   });
-    // }
-    // Handle sponsorflare auth
+
     const sponsorflare = await middleware(request, env);
     if (sponsorflare) return sponsorflare;
 
     const sponsor = await getSponsor(request, env);
 
     const { scope, access_token, owner_id } = getCookies(request);
-
-    if (
-      url.pathname === "/dashboard" ||
-      (sponsor.is_authenticated &&
-        sponsor.owner_login &&
-        !url.searchParams.get("home") &&
-        url.pathname === "/")
-    ) {
-      if (!sponsor.is_authenticated) {
-        // Trick (see https://x.com/janwilmake/status/1884635657131221244)
-        return new Response("Redirecting...", {
-          status: 307,
-          headers: {
-            Location:
-              url.origin +
-              `/login?redirect_uri=${encodeURIComponent(
-                "https://dashboard.uithub.com/dashboard",
-              )}`,
-          },
-        });
-      }
-
-      const apiKeyPart = access_token ? `&apiKey=${access_token}` : undefined;
-
-      const reposResponse = await fetch(
-        `http://nachocache.com/1d/stale/join.forgithub.com/${sponsor.owner_login}?datapoints=size&datapoints=details&datapoints=domain&datapoints=openapi${apiKeyPart}`,
-      );
-      if (!reposResponse.ok) {
-        return new Response("Something went wrong: " + reposResponse.status, {
-          status: reposResponse.status,
-        });
-      }
-
-      const joinData: {
-        errors: any[];
-        responses: {
-          [owner: string]: {
-            [repo: string]: {
-              details: {
-                full_name: string;
-                description: string;
-                url: string;
-                homepage: string | null;
-                updated_at: string;
-                size: number;
-              };
-            };
-          };
-        };
-      } = await reposResponse.json();
-
-      const repos = Object.keys(joinData.responses[sponsor.owner_login!]).map(
-        (key) => {
-          const item = joinData.responses[sponsor.owner_login!][key];
-          const { full_name, description, homepage, size, updated_at } =
-            item.details || {};
-          return {
-            full_name,
-            description,
-            homepage,
-            size,
-            url: `https://github.com/${full_name}`,
-            updated_at,
-            screenshotUrl: homepage
-              ? `https://quickog.com/screenshot/${homepage}`
-              : null,
-          };
-        },
-      );
-
-      return new Response(
-        dashboardHtml.replace(
-          "<script>",
-          `<script>\nconst data = ${JSON.stringify(
-            {
-              sponsor,
-              scope,
-              joinData,
-              repos,
-            },
-            undefined,
-            2,
-          )};\n\n`,
-        ),
-        { headers: { "content-type": "text/html" } },
-      );
-    }
 
     if (url.pathname === "/usage.json") {
       const usage = await getUsage(request, env);
@@ -127,6 +33,7 @@ export default {
         headers: { "Content-Type": "application/json" },
       });
     }
+
     if (url.pathname === "/usage.html" || url.pathname === "/usage") {
       const usage = await getUsage(request, env);
       if (!usage.usage) {
@@ -148,6 +55,125 @@ export default {
         },
       );
     }
+
+    const [owner, page] = url.pathname.split("/").slice(1);
+
+    if (owner && page) {
+      const apiKeyPart = access_token ? `&apiKey=${access_token}` : undefined;
+
+      const reposResponse = await fetch(
+        `http://nachocache.com/1d/stale/join.forgithub.com/${sponsor.owner_login}?datapoints=size&datapoints=details&datapoints=domain&datapoints=openapi${apiKeyPart}`,
+      );
+      if (!reposResponse.ok) {
+        return new Response("Something went wrong: " + reposResponse.status, {
+          status: reposResponse.status,
+        });
+      }
+
+      const joinData: {
+        errors: any[];
+        responses?: {
+          [owner: string]: {
+            [repo: string]: {
+              details: {
+                full_name: string;
+                description: string;
+                url: string;
+                homepage: string | null;
+                updated_at: string;
+                size: number;
+              };
+            };
+          };
+        };
+      } = await reposResponse.json();
+
+      const ownerResponse = joinData.responses?.[sponsor.owner_login!];
+
+      const repos = ownerResponse
+        ? Object.keys(ownerResponse).map((key) => {
+            const item = joinData.responses![sponsor.owner_login!][key];
+            const { full_name, description, homepage, size, updated_at } =
+              item.details || {};
+            return {
+              full_name,
+              description,
+              homepage,
+              size,
+              updated_at,
+              url: `https://github.com/${full_name}`,
+              screenshotUrl: homepage
+                ? `https://quickog.com/screenshot/${homepage}`
+                : null,
+            };
+          })
+        : undefined;
+      if (page === "dashboard.json") {
+        return new Response(
+          JSON.stringify({ repos, context: undefined }, undefined, 2),
+          { status: 200, headers: { "content-type": "application/json" } },
+        );
+      }
+
+      if (page === "dashboard.md") {
+        const markdown = repos
+          ?.map((item) =>
+            Object.keys(item)
+              .map((key) => `${key}: ${item[key as keyof typeof item]}`)
+              .join("\n"),
+          )
+          .join("\n\n--------\n\n");
+        return new Response(markdown, {
+          status: 200,
+          headers: { "content-type": "text/markdown" },
+        });
+      }
+
+      if (page === "grid.html") {
+        return new Response(
+          gridHtml.replace(
+            "<script>",
+            `<script>\nwindow.data = ${JSON.stringify(
+              { grid: repos },
+              undefined,
+              2,
+            )};\n\n`,
+          ),
+          { headers: { "content-type": "text/html" } },
+        );
+      }
+
+      if (page === "dashboard.html") {
+        return new Response(
+          dashboardHtml.replace(
+            "<script>",
+            `<script>\nconst data = ${JSON.stringify(
+              {
+                sponsor,
+                scope,
+                joinData,
+                repos,
+              },
+              undefined,
+              2,
+            )};\n\n`,
+          ),
+          { headers: { "content-type": "text/html" } },
+        );
+      }
+    }
+
+    const isHome = url.searchParams.get("home") === "true";
+    if (sponsor.is_authenticated && !isHome) {
+      return new Response("redirecting", {
+        status: 302,
+        headers: { location: `/${sponsor.owner_login}/dashboard.html` },
+      });
+    }
+
+    const ctaHref = sponsor.is_authenticated
+      ? `/${sponsor.owner_login}/dashboard.html`
+      : "/login?scope=user:email";
 
     return new Response(
       html`<!DOCTYPE html>
@@ -268,9 +294,7 @@ export default {
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                   <a
                     id="login"
-                    href="${sponsor.is_authenticated
-                      ? "/dashboard"
-                      : "/login?scope=user:email"}"
+                    href="${ctaHref}"
                     class="w-full sm:w-auto bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 px-6 py-3 rounded-lg font-medium transition-colors text-center text-white"
                   >
                     ${sponsor.is_authenticated

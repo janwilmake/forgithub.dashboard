@@ -22,7 +22,7 @@ Be sure to do one more iteration on chat (nav and some bugs) - then ask people t
 
 ## `openapi.json`
 
-make openapi that documents the use of `dashboard.json` and `dashboard.md`
+Make openapi that documents the use of `dashboard.json` and `dashboard.md`
 
 ## `/[owner]/dashboard.html` UI
 
@@ -32,7 +32,7 @@ make openapi that documents the use of `dashboard.json` and `dashboard.md`
 - show repo card with screenshot on the left, pane at the right that renders a datapoint such as README.md, CHANGELOG.md, SPEC.md, TODO.md, ADR.md, size, and openapiSummary
 - clear buttons linking to useful things like uithub, github, website, forgithub (other tools)
 
-## `grid.html`
+## `/owner/grid.html`
 
 Renders ag-grid which just loads from `/dashboard.json` via frontend
 
@@ -42,4 +42,4 @@ We need to use the same datapoint but render a more exploration friendly dashboa
 
 ## Stars tab
 
-- all repos you've starred should show up here
+- All repos you've starred should show up here

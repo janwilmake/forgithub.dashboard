@@ -1,6 +1,7 @@
 name = "uithub_dashboard"
 main = "main.ts"
 compatibility_date = "2025-01-25"
+dev.port = 3000
 
 routes = [
   { pattern = "githus.com", custom_domain = true },

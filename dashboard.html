@@ -46,11 +46,25 @@
                 </h1>
             </div>
 
-
+            <!-- View Toggle Buttons -->
+            <div class="flex gap-3">
+                <a href="dashboard.md"
+                    class="bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    <span class="text-sm">LLM Context</span>
+                </a>
+                <a href="dashboard.json"
+                    class="bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    <span class="text-sm">Raw Data</span>
+                </a>
+                <a href="grid.html"
+                    class="bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    <span class="text-sm">Table View</span>
+                </a>
+            </div>
 
             <div class="flex items-center">
                 <!-- User Profile Section -->
-                <a href="/usage"
+                <a href="/usage.html"
                     class="flex items-center gap-3 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
                     <img id="userAvatar" class="w-8 h-8 rounded-full" alt="User avatar">
                     <div class="flex flex-col">
@@ -60,7 +74,6 @@
                 </a>
             </div>
         </div>
-
 
         <!-- Rest of the content remains the same -->
         <p class="my-24 text-3xl">Thanks for requesting early access. Beta users will be added on a rolling basis.
@@ -101,13 +114,7 @@
             const container = document.getElementById('repo-grid');
 
             if (!data.repos || data.repos.length === 0) {
-                container.innerHTML = `
-                    <p class="col-span-2 my-24 text-3xl">Thanks for requesting early access. Beta users will be added on a rolling basis.
-                        Consider speeding up your admission by <a class="text-purple-600"
-                            href="https://github.com/sponsors/janwilmake" target="_blank">sponsoring me</a> and <a target="_blank"
-                            class="text-purple-600"
-                            href="https://x.com/intent/post?text=If%20I%20had%20AI%20agents%20to%20work%20in%20my%20repositories%2024%2F7%20(see%20https%3A%2F%2Fdashboard.uithub.com)%20I%20would...">share
-                            on X what you would use background code agents for</a>.</p>`;
+                container.innerHTML = `No repos found`;
                 return;
             }
 
