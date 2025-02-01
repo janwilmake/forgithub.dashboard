@@ -48,6 +48,7 @@
 
             <!-- View Toggle Buttons -->
             <div class="flex gap-3">
+
                 <a href="dashboard.md"
                     class="flex items-center gap-2 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -55,6 +56,14 @@
                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                     </svg>
                     <span class="text-sm">LLM Context</span>
+                </a>
+                <a id="chatButton" target="_blank" href="https://githuw.com/"
+                    class="flex items-center gap-2 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                    </svg>
+                    <span class="text-sm">Chat</span>
                 </a>
                 <a href="dashboard.json"
                     class="flex items-center gap-2 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
@@ -76,7 +85,7 @@
 
             <div class="flex items-center">
                 <!-- User Profile Section -->
-                <a href="/usage.html"
+                <a id="sponsorCard" href="/usage.html"
                     class="flex items-center gap-3 bg-purple-900/30 border border-purple-800 px-4 py-2 rounded-lg hover:bg-purple-800/30 transition-colors">
                     <img id="userAvatar" class="w-8 h-8 rounded-full" alt="User avatar">
                     <div class="flex flex-col">
@@ -112,11 +121,16 @@
     <script>
         // Update user profile
         function updateUserProfile() {
-            if (data.sponsor) {
-                document.getElementById('userAvatar').src = data.sponsor.avatar_url || '/default-avatar.png';
-                document.getElementById('userName').textContent = data.sponsor.owner_login;
-                const balance = ((data.sponsor.clv || 0) - (data.sponsor.spent || 0)) / 100;
+
+            document.getElementById("chatButton").href = `https://githuw.com/${window.data.owner}`
+
+            if (window.data.sponsor?.is_authenticated) {
+                document.getElementById('userAvatar').src = window.data.sponsor.avatar_url || '/default-avatar.png';
+                document.getElementById('userName').textContent = window.data.sponsor.owner_login;
+                const balance = ((window.data.sponsor.clv || 0) - (window.data.sponsor.spent || 0)) / 100;
                 document.getElementById('userBalance').textContent = `Balance: $${balance.toFixed(2)}`;
+            } else {
+                document.getElementById("sponsorCard").remove()
             }
         }
 
@@ -126,12 +140,12 @@
             // Show owner banner if viewing other's repos
             const ownerBanner = document.getElementById('ownerBanner');
             const ownerName = document.getElementById('ownerName');
-            if (data.sponsor && data.owner !== data.sponsor.owner_login) {
+            if (window.data.sponsor && window.data.owner !== window.data.sponsor.owner_login) {
                 ownerBanner.classList.remove('hidden');
                 ownerName.textContent = data.owner;
             }
 
-            if (!data.repos || data.repos.length === 0) {
+            if (!window.data.repos || window.data.repos.length === 0) {
                 container.innerHTML = `
                     <div class="col-span-2 text-center py-8 text-gray-400">
                         No repositories found
@@ -140,7 +154,7 @@
             }
 
             // Sort repos by updated_at (recent first)
-            const sortedRepos = [...data.repos].sort((a, b) =>
+            const sortedRepos = [...window.data.repos].sort((a, b) =>
                 new Date(b.updated_at) - new Date(a.updated_at)
             );
 
