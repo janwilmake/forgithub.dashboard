@@ -1,13 +1,6 @@
 # blog
 
-write a supercool blogpost layout out the idea of 'validation looped coding'. put this on wilmake.com and other pages, ensure CTA is sponsorship, and push this to hackernews. go all in on this article going viral and collecting signups. every page from now that i release should have a sign-in button to sign-in with github, after which i know much more about the person.
-
-# githubwatch
-
-1. Actually subscribe to watching all repos upon login (via a waituntil+scheduled api call).
-2. Ensure per user I know the source (where/when they logged in)
-3. Ensure the watching all lands in cache
-4. Watch also triggers calculating all repo stuff, so we end up with a file of all repos + calcs that is refreshed each time something changes. 🐐
+Write a supercool blogpost layout out the idea of 'validation looped coding'. put this on wilmake.com and other pages, ensure CTA is sponsorship, and push this to hackernews. go all in on this article going viral and collecting signups. every page from now that I release should have a sign-in button to sign-in with github, after which i know much more about the person.
 
 # cycle
 

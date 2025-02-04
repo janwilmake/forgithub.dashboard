@@ -133,7 +133,11 @@
                 document.getElementById('userAvatar').src = window.data.sponsor.avatar_url || '/default-avatar.png';
                 document.getElementById('userName').textContent = window.data.sponsor.owner_login;
                 const balance = ((window.data.sponsor.clv || 0) - (window.data.sponsor.spent || 0)) / 100;
-                document.getElementById('userBalance').textContent = `Balance: $${balance.toFixed(2)}`;
+                const formattedBalance = balance >= 1000
+                    ? `$${Math.round(balance).toLocaleString('en-US')}`
+                    : `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+                document.getElementById('userBalance').textContent = `Balance: ${formattedBalance}`;
+
             } else {
                 document.getElementById("sponsorCard").remove()
             }
