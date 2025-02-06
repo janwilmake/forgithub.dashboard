@@ -38,7 +38,3 @@ Layout:
 # TODO
 
 See [todo](TODO.md)
-
-# Pitchdeck
-
-See [pitch-for-fund.md](./pitch-for-fund.md)
