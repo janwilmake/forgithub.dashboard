@@ -4,11 +4,11 @@
 
 ✅ Allow viewing someone elses dashboard too (public only)
 
-Make openapi that documents the use of `dashboard.json` and `dashboard.md`
+Make OpenAPI that documents the use of `dashboard.json` and `dashboard.md`
 
 ## Stars tab
 
-All repos you've starred should show up here
+All repos you've starred should show up here.
 
 ## `/owner/dashboard.json` (2025-01-31)
 
@@ -49,3 +49,28 @@ Be sure to do one more iteration on chat (nav and some bugs) - then ask people t
 ## https://cf.uithub.com/[owner]
 
 We need to use the same datapoint but render a more exploration friendly dashboard intended to understand what someone does. Can use the same `dashboard.json/md` api!
+
+# Patch error
+
+Fork not working:
+
+https://patch.uithub.com/prepare?markdown=https%3A%2F%2Fchat.uithub.com%2Fgithub.com%2Fmintlify%2Fguides%2Fmessage%2Fcan%2520you%2520turn%2520this%2520into%2520a%2520single%2520markdown%2520guide%2520comprising%2520all%2520of%2520the%2520pages%253F%2Fmodel%2Fclaude-3-5-sonnet-latest%2Fcontent.md&sourceOwner=mintlify&sourceRepo=guides&sourceBranch=main&targetBranch=main
+
+![](err.png)
+
+# Queue improvements
+
+After push:
+
+- call for https://diagram.forgithub.com/owner/repo/image.png?max-age=0
+- call for https://size.uithub.com/owner/repo
+
+After deployment (1 minute after)
+
+- call for https://quickog.com/screenshot/{url} (only insert if 200)
+
+# Dashboard
+
+✅ Diagram: add max-age!
+
+Render size, screenshot, and diagram if available.
