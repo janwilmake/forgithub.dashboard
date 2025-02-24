@@ -250,7 +250,7 @@ export default {
             <!-- Facebook Meta Tags -->
             <meta
               property="og:url"
-              content="https://https://dashboard.uithub.com"
+              content="https://https://dashboard.forgithub.com"
             />
             <meta property="og:type" content="website" />
             <meta
@@ -263,7 +263,7 @@ export default {
             />
             <meta
               property="og:image"
-              content="https://quickog.com/screenshot/https://dashboard.uithub.com?b"
+              content="https://quickog.com/screenshot/https://dashboard.forgithub.com"
             />
             <meta
               property="og:image:alt"
@@ -276,11 +276,11 @@ export default {
             <meta name="twitter:card" content="summary_large_image" />
             <meta
               property="twitter:domain"
-              content="https://dashboard.uithub.com"
+              content="https://dashboard.forgithub.com"
             />
             <meta
               property="twitter:url"
-              content="https://https://dashboard.uithub.com"
+              content="https://https://dashboard.forgithub.com"
             />
             <meta
               name="twitter:title"
@@ -292,7 +292,7 @@ export default {
             />
             <meta
               name="twitter:image"
-              content="https://quickog.com/screenshot/https://dashboard.uithub.com?b"
+              content="https://quickog.com/screenshot/https://dashboard.forgithub.com"
             />
 
             <script src="https://cdn.tailwindcss.com"></script>

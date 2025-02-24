@@ -11,7 +11,7 @@ https://stackoverflow.com/questions/18492576/share-cookies-between-subdomain-and
 
 ## Continue (2025-01-29)
 
-✅ To proof this works, try it at `uithub.cf` in production and ensure it actually redirects to `dashboard.uithub.com/callback` after logging in so we can use the same client.
+✅ To proof this works, try it at `uithub.cf` in production and ensure it actually redirects to `dashboard.forgithub.com/callback` after logging in so we can use the same client.
 
 ✅ Login should just require `user:email`
 
