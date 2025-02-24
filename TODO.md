@@ -12,7 +12,7 @@ All repos you've starred should show up here.
 
 ## `/owner/dashboard.json` (2025-01-31)
 
-Improve `dashboard.uithub.com/dashboard.json`:
+Improve `dashboard.forgithub.com/dashboard.json`:
 
 - Returns KV value immediately (or loads if not yet or `?refresh=true`)
 - Calls `waitUntil` that calls queue to fetch from `join` if KV >1h old or if there was a `?refresh=true`
