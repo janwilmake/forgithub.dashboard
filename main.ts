@@ -4,7 +4,7 @@ import {
   html,
   middleware,
   getUsage,
-  getCookies,
+  getAuthorization,
 } from "sponsorflare";
 import dashboardHtml from "./dashboard.html";
 import usageHtml from "./usage.html";
@@ -34,7 +34,7 @@ export default {
 
     const sponsor = await getSponsor(request, env);
 
-    const { scope, access_token, owner_id } = getCookies(request);
+    const { scope, access_token, owner_id } = getAuthorization(request);
 
     if (url.pathname === "/usage.json") {
       const usage = await getUsage(request, env);
