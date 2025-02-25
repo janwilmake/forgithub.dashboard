@@ -8,7 +8,9 @@ Make OpenAPI that documents the use of `dashboard.json` and `dashboard.md`
 
 ## Stars tab
 
-All repos you've starred should show up here.
+All repos you've starred should show up here. If the user has lists, the lists should be categories, since if it's listed, it's also starred. If there's no particular list for something, just put in general.
+
+Later it'd be great if an AI can automatically fill the lists every hour if there are new/changed lists or new repos. KILLER FEATURE FOR GITHUB.
 
 ## `/owner/dashboard.json` (2025-01-31)
 
@@ -63,7 +65,7 @@ https://patch.uithub.com/prepare?markdown=https%3A%2F%2Fchat.uithub.com%2Fgithub
 After push:
 
 - call for https://diagram.forgithub.com/owner/repo/image.png?max-age=0
-- call for https://size.uithub.com/owner/repo
+- call for https://size.forgithub.com/owner/repo
 
 After deployment (1 minute after)
 
