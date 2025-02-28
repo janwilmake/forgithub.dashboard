@@ -3,7 +3,7 @@
 > [!NOTE]
 > This is a Work in Progress, built out from https://github.com/janwilmake/cloudflare-sponsorware. [Follow the progress in this thread](https://x.com/janwilmake/status/1883817352287924463)
 
-Goal: bring all useful datapoints together for a subset of repos in a cached JSON and UI. Anything you want to see about your repos/sites/apps. UI where you can switch between different datasets from `forgithub.join`, and view them in several ways.
+Datapoint Examples:
 
 - regular details
 - hosted domain (domain.forgithub.com)

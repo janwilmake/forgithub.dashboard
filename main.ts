@@ -126,7 +126,7 @@ export default {
               size,
               updated_at,
               githubUrl: `https://github.com/${full_name}`,
-              chatUrl: `https://githuw.com/${full_name}`,
+              chatUrl: `https://githuq.com/${full_name}`,
               contextUrl: `https://uithub.com/${full_name}`,
               screenshotUrl: homepage
                 ? `https://quickog.com/screenshot/${homepage}`

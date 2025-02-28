@@ -1,29 +1,25 @@
-✅ Use `join.forgithub.com` but with a `nachocache` in front. Just details for now
+## Improved dataset
 
-✅ `/owner/grid.html` Renders ag-grid which just loads from `/dashboard.json` via frontend
+Initial querying of this data when it's not in the cache takes a few seconds and many queries. We could do this using a queue.
 
-✅ Allow viewing someone elses dashboard too (public only)
-
-Make OpenAPI that documents the use of `dashboard.json` and `dashboard.md`
+The storage of this data may be easiest using a durable object since we can use SQLite on a per-owner basis.
 
 ## Stars tab
 
-All repos you've starred should show up here. If the user has lists, the lists should be categories, since if it's listed, it's also starred. If there's no particular list for something, just put in general.
+Use `/stars/owner` or `/stars/owner/private` in dashboard! All repos you've starred should show up here. If the user has lists, the lists should be categories, since if it's listed, it's also starred. If there's no particular list for something, just put in general.
 
-Later it'd be great if an AI can automatically fill the lists every hour if there are new/changed lists or new repos. KILLER FEATURE FOR GITHUB.
+🔥 Later it'd be great if an AI can automatically fill the lists every hour if there are new/changed lists or new repos. KILLER FEATURE FOR GITHUB.
 
-## `/owner/dashboard.json` (2025-01-31)
+## Explore tab button
 
-Improve `dashboard.forgithub.com/dashboard.json`:
+This shall actually link to explore.forgithub.com (`forgithub.explore`)
 
-- Returns KV value immediately (or loads if not yet or `?refresh=true`)
-- Calls `waitUntil` that calls queue to fetch from `join` if KV >1h old or if there was a `?refresh=true`
-- Has README.md, CHANGELOG.md, SPEC.md, TODO.md, ADR.md, size, and openapiSummary
-- Has `context: {id:string,title:string,url:string,description:string}[]` which can be used for chat (redirect to `chat.uithub.com?context=https://dashboard.uithub.com/dashboard.json&id=xxx`)
+## Add some stats
 
-Does this just for all repos from the last 30 days (for now) to prevent ratelimit trouble.
+- add size + diagram for each repo!
+- make it fast by calculating this in the back only, and just serving stuff from a static KV file.
 
-## githubwatch
+## Listening
 
 ❗️ We need a way to nicely request and store an access_token for watching from the dashboard.
 
@@ -31,6 +27,23 @@ Does this just for all repos from the last 30 days (for now) to prevent ratelimi
 2. Ensure per user I know the source (where/when they logged in)
 3. Ensure the watching all lands in cache
 4. Watch also triggers calculating all repo stuff, so we end up with a file of all repos + calcs that is refreshed each time something changes. 🐐
+
+- make it listen and upate
+- track anyones commit events and accumulate their 'changes'
+- track all actions too and show them in dashboard. key for claudeflair
+
+## `/owner/dashboard.json`
+
+Improve `dashboard.forgithub.com/dashboard.json`:
+
+- Returns KV value immediately (or loads if not yet or `?refresh=true`)
+- Calls `waitUntil` that calls queue to fetch from `join` if KV >1h old or if there was a `?refresh=true`
+- Has README.md, CHANGELOG.md, SPEC.md, TODO.md, ADR.md, size, and openapiSummary
+- Has `context: {id:string,title:string,url:string,description:string}[]` which can be used for chat (redirect to `chat.forgithub.com?context=https://dashboard.forgithub.com/dashboard.json&id=xxx`)
+
+Does this just for all repos from the last 30 days (for now) to prevent ratelimit trouble.
+
+OpenAPI for `dashboard.json` and `dashboard.md`
 
 ## `/[owner]/dashboard.md?focus=[datapoint]`
 
@@ -48,7 +61,7 @@ Be sure to do one more iteration on chat (nav and some bugs) - then ask people t
 - at the top, add search that matches on full_name
 - show repo card with screenshot on the left, pane at the right that renders a datapoint such as README.md, CHANGELOG.md, SPEC.md, TODO.md, ADR.md, size, and openapiSummary
 
-## https://cf.uithub.com/[owner]
+## https://dashboard.forgithub.com/[owner]
 
 We need to use the same datapoint but render a more exploration friendly dashboard intended to understand what someone does. Can use the same `dashboard.json/md` api!
 
@@ -70,9 +83,3 @@ After push:
 After deployment (1 minute after)
 
 - call for https://quickog.com/screenshot/{url} (only insert if 200)
-
-# Dashboard
-
-✅ Diagram: add max-age!
-
-Render size, screenshot, and diagram if available.

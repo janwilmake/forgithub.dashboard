@@ -4,8 +4,7 @@ compatibility_date = "2025-01-25"
 dev.port = 3000
 
 routes = [
-  { pattern = "dashboard.forgithub.com", custom_domain = true },
-  { pattern = "dashboard.uithub.com", custom_domain = true }
+  { pattern = "dashboard.forgithub.com", custom_domain = true }
 ]
 
 

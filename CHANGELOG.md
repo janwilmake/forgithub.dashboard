@@ -30,3 +30,9 @@ https://stackoverflow.com/questions/18492576/share-cookies-between-subdomain-and
 ✅ Put real data inhere and ensure its cached
 
 ✅ Created very nice logo (⌂)
+
+✅ Use `join.forgithub.com` but with a `nachocache` in front. Just details for now
+
+✅ `/owner/grid.html` Renders ag-grid which just loads from `/dashboard.json` via frontend
+
+✅ Allow viewing someone elses dashboard too (public only)
