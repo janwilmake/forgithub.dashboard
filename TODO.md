@@ -65,14 +65,6 @@ Be sure to do one more iteration on chat (nav and some bugs) - then ask people t
 
 We need to use the same datapoint but render a more exploration friendly dashboard intended to understand what someone does. Can use the same `dashboard.json/md` api!
 
-# Patch error
-
-Fork not working:
-
-https://patch.uithub.com/prepare?markdown=https%3A%2F%2Fchat.uithub.com%2Fgithub.com%2Fmintlify%2Fguides%2Fmessage%2Fcan%2520you%2520turn%2520this%2520into%2520a%2520single%2520markdown%2520guide%2520comprising%2520all%2520of%2520the%2520pages%253F%2Fmodel%2Fclaude-3-5-sonnet-latest%2Fcontent.md&sourceOwner=mintlify&sourceRepo=guides&sourceBranch=main&targetBranch=main
-
-![](err.png)
-
 # Queue improvements
 
 After push:

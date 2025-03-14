@@ -3,6 +3,6 @@
     "@cloudflare/workers-types": "^4.20250124.3"
   },
   "dependencies": {
-    "sponsorflare": "^0.0.37"
+    "sponsorflare": "^0.1.1"
   }
 }

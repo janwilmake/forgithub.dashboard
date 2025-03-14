@@ -19,4 +19,4 @@ COOKIE_DOMAIN_SHARING = "true"
 name = "SPONSOR_DO"
 class_name = "SponsorDO"
 # This allows to use the same DO even though it's defined in another worker!
-script_name = "sponsorflare"
+script_name = "sponsorflare2"
